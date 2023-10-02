@@ -1,1 +1,0 @@
-https://helm.sh/docs/chart_template_guide/builtin_objects/
