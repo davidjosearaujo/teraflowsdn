@@ -5,6 +5,8 @@ Vagrant.configure("2") do |config|
     controller.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
     controller.vm.network "forwarded_port", guest: 8084, host: 8084   # Linkerd dashboard
     controller.vm.network "private_network", ip: "192.168.56.2"
+    controller.vm.provision "file", source: "./reverse-proxy-linkerd.sh", destination: "./reverse-proxy-linkerd.sh"
+    controller.vm.provision "shell", inline: "chmod +x ./reverse-proxy-linkerd.sh && ./reverse-proxy-linkerd.sh"
   end
 
   config.vm.define "containerlab" do |containerlab|
