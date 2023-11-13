@@ -11,13 +11,12 @@ echo 'server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
     }
-}' > ./tfs-ctrl/expose-linkerd/expose-linkerd
+}' > /home/vagrant/expose-linkerd
 
 # Create symlink of the NGINX configuration file
-sudo ln -s ./tfs-ctrl/expose-linkerd/expose-linkerd /etc/nginx/sites-enabled/
+sudo ln -s /home/vagrant/expose-linkerd /etc/nginx/sites-enabled/
 
 # Commit the reverse proxy configurations
 sudo systemctl restart nginx
 
-# Initiate linkerd dashboard
-linkerd viz dashboard &
+echo "Linkerd Viz reverse proxy running!"
