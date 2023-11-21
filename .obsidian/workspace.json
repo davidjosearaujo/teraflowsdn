@@ -1,0 +1,155 @@
+{
+  "main": {
+    "id": "2773607f4f862b88",
+    "type": "split",
+    "children": [
+      {
+        "id": "28fc9e71a81dad8b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "37ef67ea7aaaf221",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "7ac2970b0e7db955",
+    "type": "split",
+    "children": [
+      {
+        "id": "67151568077f8070",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "b41606b549326955",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "65616b54005f7009",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          },
+          {
+            "id": "a3453f8a71556df1",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {}
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e05ab005c9465041",
+    "type": "split",
+    "children": [
+      {
+        "id": "cbcb083e400ada6e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ced8e105c4a2cfa1",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "1213d3d32d7db715",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "333dcb50428f47cb",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true
+              }
+            }
+          },
+          {
+            "id": "01bc740e6c75a033",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "doc/notes/NGINX DOS Mitigation.md"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "37ef67ea7aaaf221",
+  "lastOpenFiles": [
+    "doc/notes/NGINX DOS Mitigation.md",
+    "doc/notes",
+    "Untitled"
+  ]
+}
