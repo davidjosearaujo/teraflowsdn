@@ -149,6 +149,8 @@
   },
   "active": "37ef67ea7aaaf221",
   "lastOpenFiles": [
+    "stress-testing/prolonged-attack/01-webui-service-crash.png",
+    "stress-testing/prolonged-attack/00-denial-of-service.png",
     "stress-testing/prolonged-attack",
     "doc/notes/NGINX Attack Mitigation.md",
     "doc/notes",
