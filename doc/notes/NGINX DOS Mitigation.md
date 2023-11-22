@@ -8,3 +8,7 @@
 
 Programmatic solutions:
 - [ ] Real-time traffic analyser and NGINX configuration blocklists update 
+
+# NGINX ingress config
+
+[Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#external-authentication)

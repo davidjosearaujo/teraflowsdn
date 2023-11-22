@@ -21,9 +21,10 @@ Vagrant.configure("2") do |config|
       s.inline = "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
     end
 
-    # Update controller source code
+    # TESTING
+    # Update controller source code to desired branch
     controller.vm.provision "shell" do |s|
-      s.inline = "cd ./tfs-ctrl && git pull"
+      s.inline = "cd ./tfs-ctrl && git pull && git switch " + ENV['BRANCH']
     end
 
   end
