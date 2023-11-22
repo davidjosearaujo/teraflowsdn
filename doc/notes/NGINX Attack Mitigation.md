@@ -14,13 +14,14 @@ $ kubectl apply -f <manifest-file>
 ```
 
 Options used:
-- nginx.ingress.kubernetes.io/auth-keepalive
-- nginx.ingress.kubernetes.io/auth-keepalive-timeout
 - nginx.ingress.kubernetes.io/limit-rps
 - nginx.ingress.kubernetes.io/limit-connections
 - nginx.ingress.kubernetes.io/proxy-connect-timeout
 - nginx.ingress.kubernetes.io/proxy-send-timeout
 - nginx.ingress.kubernetes.io/proxy-read-timeout
+
+## Testing
+Create a LAN with two clients and a server. One of the clients is the attacker, the other is a legitimate user. The attacker will continue to spam the server and the legitimate user should maintain access to the controller, however, it may experience DOS at the very beginning of the attack.
 ## Programmatic solutions
 
 Develop a traffic monitoring service that is able to update NGINX configurations, namely:
