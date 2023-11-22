@@ -7,9 +7,9 @@
 - [ ] Closing slow connections
 
 Programmatic solutions:
-- [ ] Real-time traffic analyser and NGINX configuration blocklists update 
+- [ ] Real-time traffic analyzer and NGINX configuration blacklists update 
+## Ingress configuration
+Configure the ingress controller to limit the connections request limit, number of concurrent connections to the same IP address, among other specifications, using [Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#external-authentication)
 
-# NGINX ingress config
-Options used to configure NGINX ingress controller to limit the connections request limit, number of concurrent connections to the same IP address, among other specifications, using [Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#external-authentication)
 Options used:
 - 
