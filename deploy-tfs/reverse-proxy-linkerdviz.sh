@@ -25,11 +25,12 @@ After=network.target
 StartLimitIntervalSec=0
 
 [Service]
-Type=simple
+Type=simplei
 Restart=always
 RestartSec=1
 User=vagrant
-ExecStart=/bin/bash $(linkerd viz dashboard)
+Environment="VIZ=viz" "DASH=dashboard"
+ExecStart=/bin/bash linkerd $VIZ $DASH
 
 [Install]
 WantedBy=multi-user.target' > linkerdviz.service
