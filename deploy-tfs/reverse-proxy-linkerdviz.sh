@@ -29,8 +29,7 @@ Type=simplei
 Restart=always
 RestartSec=1
 User=vagrant
-Environment="VIZ=viz" "DASH=dashboard"
-ExecStart=/bin/bash linkerd $VIZ $DASH
+ExecStart=/bin/bash export PATH=$PATH:/snap/bin && /bin/bash linkerd viz dashboard
 
 [Install]
 WantedBy=multi-user.target' > linkerdviz.service
