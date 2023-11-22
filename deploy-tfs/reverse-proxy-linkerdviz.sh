@@ -23,12 +23,13 @@ echo '[Unit]
 Description=Linkerd Viz dashboard
 After=network.target
 StartLimitIntervalSec=0
+
 [Service]
 Type=simple
 Restart=always
 RestartSec=1
 User=vagrant
-ExecStart=linkerd viz dashboard
+ExecStart=/bin/bash linkerd viz dashboard
 
 [Install]
 WantedBy=multi-user.target' > linkerdviz.service
