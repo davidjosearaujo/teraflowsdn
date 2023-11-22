@@ -10,5 +10,6 @@ Programmatic solutions:
 - [ ] Real-time traffic analyser and NGINX configuration blocklists update 
 
 # NGINX ingress config
-
-[Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#external-authentication)
+Options used to configure NGINX ingress controller to limit the connections request limit, number of concurrent connections to the same IP address, among other specifications, using [Annotations](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#external-authentication)
+Options used:
+- 
