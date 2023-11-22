@@ -5,9 +5,6 @@
 	- [ ] Rate of request
 	- [ ] Number of connection
 - [ ] Closing slow connections
-
-Programmatic solutions:
-- [ ] Real-time traffic analyzer and NGINX configuration blacklists update 
 ## Ingress configuration
 ### View configurations
 ```
@@ -18,3 +15,6 @@ Configure the ingress controller to limit the connections request limit, number 
 
 Options used:
 - 
+## Programmatic solutions
+
+Develop a traffic monitoring service that is able to update NGINX configurations
