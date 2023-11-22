@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "file": "doc/notes/NGINX Attack Mitigation.md",
                 "mode": "source",
                 "source": false
               }
@@ -86,7 +86,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "file": "doc/notes/NGINX Attack Mitigation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -103,7 +103,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "doc/notes/NGINX DOS Mitigation.md",
+                "file": "doc/notes/NGINX Attack Mitigation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -126,7 +126,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "doc/notes/NGINX DOS Mitigation.md"
+                "file": "doc/notes/NGINX Attack Mitigation.md"
               }
             }
           }
@@ -149,7 +149,7 @@
   },
   "active": "37ef67ea7aaaf221",
   "lastOpenFiles": [
-    "doc/notes/NGINX DOS Mitigation.md",
+    "doc/notes/NGINX Attack Mitigation.md",
     "doc/notes",
     "Untitled"
   ]
