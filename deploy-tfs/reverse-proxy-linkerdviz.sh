@@ -19,27 +19,10 @@ sudo ln -s /home/vagrant/expose-linkerd /etc/nginx/sites-enabled/
 # Commit the reverse proxy configurations
 sudo systemctl restart nginx
 
-echo '[Unit]
-Description=Linkerd Viz dashboard
-After=network.target
-StartLimitIntervalSec=0
+# Enable start on login
+echo "linkerd viz dashboard &" >> .profile
 
-[Service]
-Type=simplei
-Restart=always
-RestartSec=1
-User=vagrant
-ExecStart=/bin/bash export PATH=$PATH:/snap/bin && /bin/bash linkerd viz dashboard
-
-[Install]
-WantedBy=multi-user.target' > linkerdviz.service
-
-sudo cp ./linkerdviz.service /etc/systemd/system/linkerdviz.service
-
-# Start Linkerd Viz dashboard
-sudo systemctl start linkerdviz
-
-# Enable start on boot
-sudo systemctl enable linkerdviz
+# Start dashboard
+linkerd viz dashboard &
 
 echo "Linkerd Viz dashboard running!"
