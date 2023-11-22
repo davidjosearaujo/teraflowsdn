@@ -10,7 +10,7 @@ Configure the ingress controller to limit the connections request limit, number 
 
 To update ingress rules, it is as simple as **editing the original manifest and reapplying it**.
 ```
-$ kubectl apply -f <manifest-file>
+$ kubectl --namespace tfs apply -f <manifest-yaml>
 ```
 
 Options used:
