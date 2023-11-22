@@ -29,7 +29,7 @@ Type=simple
 Restart=always
 RestartSec=1
 User=vagrant
-ExecStart=/bin/bash linkerd viz dashboard
+ExecStart=/bin/bash $(linkerd viz dashboard)
 
 [Install]
 WantedBy=multi-user.target' > linkerdviz.service
