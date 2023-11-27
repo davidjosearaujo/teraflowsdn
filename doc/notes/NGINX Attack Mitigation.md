@@ -14,11 +14,11 @@ $ kubectl --namespace tfs apply -f <manifest-yaml>
 ```
 
 Options used:
-- nginx.ingress.kubernetes.io/limit-rps
-- nginx.ingress.kubernetes.io/limit-connections
-- nginx.ingress.kubernetes.io/proxy-connect-timeout
-- nginx.ingress.kubernetes.io/proxy-send-timeout
-- nginx.ingress.kubernetes.io/proxy-read-timeout
+- [nginx.ingress.kubernetes.io/limit-rps](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting)
+- [nginx.ingress.kubernetes.io/limit-connections](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#rate-limiting)
+- [nginx.ingress.kubernetes.io/proxy-connect-timeout](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-timeouts)
+- [nginx.ingress.kubernetes.io/proxy-send-timeout](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-timeouts)
+- [nginx.ingress.kubernetes.io/proxy-read-timeout](https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#custom-timeouts)
 
 ## Testing
 Create a LAN with two clients and a server. One of the clients is the attacker, the other is a legitimate user. The attacker will continue to spam the server and the legitimate user should maintain access to the controller, however, it may experience DOS at the very beginning of the attack.
