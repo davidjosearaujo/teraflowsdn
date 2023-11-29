@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "doc/notes/NGINX Attack Mitigation.md",
+                "file": "doc/notes/Horizontal Pod Scaller.md",
                 "mode": "source",
                 "source": false
               }
@@ -82,7 +82,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "right": {
     "id": "e05ab005c9465041",
@@ -98,7 +99,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "doc/notes/NGINX Attack Mitigation.md",
+                "file": "doc/notes/Horizontal Pod Scaller.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +116,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "doc/notes/NGINX Attack Mitigation.md",
+                "file": "doc/notes/Horizontal Pod Scaller.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +139,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "doc/notes/NGINX Attack Mitigation.md"
+                "file": "doc/notes/Horizontal Pod Scaller.md"
               }
             }
           }
@@ -159,10 +160,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "b41606b549326955",
+  "active": "e778934ab14a81ad",
   "lastOpenFiles": [
-    "doc/notes/Horizontal Pod Scaller.md",
     "doc/notes/NGINX Attack Mitigation.md",
+    "doc/notes/Horizontal Pod Scaller.md",
     "doc/Untitled Diagram.drawio",
     "stress-testing/prolonged-attack/01-webui-service-crash.png",
     "stress-testing/prolonged-attack/00-denial-of-service.png",
