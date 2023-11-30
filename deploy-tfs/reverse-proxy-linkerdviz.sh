@@ -1,6 +1,7 @@
 # Install NGINX
 sudo apt update && sudo apt install nginx -y
 
+# NGINX reverse proxy configuration
 echo 'server {
     listen 8084;
 
@@ -10,7 +11,7 @@ echo 'server {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-    }:
+    }
 }' > /home/vagrant/expose-linkerd
 
 # Create symlink of the NGINX configuration file
