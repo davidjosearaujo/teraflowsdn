@@ -2,6 +2,8 @@
 
 ## Generate Python class hierarchy
 
+You can create topology XML or JSONs using the lib generated to `bind_topology.py`.
+
 1. Generate Python class structure
 
 ```bash
@@ -14,8 +16,17 @@ pyang -f pybind topology.yang --plugindir $PYBINDPLUGIN o bind_topology.py
 
 ## Communication
 
+By converting a connection YANG file to a protobuf file and compiling it, we can use it to write and list connections
+
 1. Generate protobuf from YANG
 
 ```bash
-protogenerator --output_dir=. --package_name=topology topology.yang 
+protogenerator --output_dir=. --package_name=topology connection.yang 
 ```
+
+2. Compile protocol buffer to Python
+
+```bash
+protoc -I=./connection --python_out=. ./connection/connection/connection.proto
+```
+
