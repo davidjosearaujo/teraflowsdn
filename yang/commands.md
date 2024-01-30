@@ -14,6 +14,12 @@ export PYBINDPLUGIN=`python3 -c 'import pyangbind; import os; print ("{}/plugin"
 pyang -f pybind topology.yang --plugindir $PYBINDPLUGIN o bind_topology.py
 ```
 
+2. Using a script like `topology.py`, we can create script topologies an print the corresponding JSON or XML configuration file that describe them.
+
+```bash
+python3 topology.py
+```
+
 ## Communication
 
 By converting a connection YANG file to a protobuf file and compiling it, we can use it to write and list connections
