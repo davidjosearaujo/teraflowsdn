@@ -29,9 +29,7 @@ sudo chmod 600 /etc/docker/daemon.json
 
 sudo systemctl restart docker
 
-echo "192.168.56.2 hub" | sudo tee -a /etc/hosts
-echo "192.168.56.3 spoke1" | sudo tee -a /etc/hosts
-echo "192.168.56.4 spoke2" | sudo tee -a /etc/hosts
+echo -e '192.168.56.2 hub\n192.168.56.3 spoke1\n192.168.56.4 spoke2' | sudo tee -a /etc/hosts
 
 sudo snap install microk8s --classic --channel=1.24/stable
 
@@ -45,5 +43,4 @@ sudo chown -f -R vagrant /home/vagrant/.kube
 microk8s config > /home/vagrant/.kube/config
 sudo chown -f -R vagrant /home/vagrant/.kube
 
-microk8s start --wait-ready
-
+microk8s start

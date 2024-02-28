@@ -1,0 +1,78 @@
+Vagrant.configure("2") do |config|
+  
+  config.vm.define "controllerHub" do |controllerHub|
+    controllerHub.vm.box = "davidjosearaujo/teraflowsdncontroller"
+    controllerHub.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
+    controllerHub.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
+    controllerHub.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
+    controllerHub.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
+    controllerHub.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
+    controllerHub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
+    controllerHub.vm.hostname = "hub"
+    controllerHub.vm.network "private_network", ip: "192.168.56.2"
+    
+    # Setup Linkerd Viz reverse proxy
+    ## Copy config file
+    controllerHub.vm.provision "file" do |f|
+      f.source = "../deploy-tfs/reverse-proxy-linkerdviz.sh"
+      f.destination = "./reverse-proxy-linkerdviz.sh"
+    end
+    ## Execute configuration file
+    controllerHub.vm.provision "shell" do |s|
+      s.inline = "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
+    end
+
+    # Configure hostnames
+    controllerHub.vm.provision "shell" do |s|
+      s.inline = "echo -e '192.168.56.2 hub\n192.168.56.3 spoke1\n192.168.56.4 spoke2' | sudo tee -a /etc/hosts"
+    end
+
+    # Update controller source code to the desired branch
+    if ENV['BRANCH'] != nil
+      controllerHub.vm.provision "shell" do |s|
+        s.inline = "cd ./tfs-ctrl && git pull && git switch " + ENV['BRANCH']
+      end
+    end
+  end
+
+  config.vm.define "spoke1" do |spoke1|
+    spoke1.vm.box = "ubuntu/focal64"
+    spoke1.vm.hostname = "spoke1"
+    spoke1.vm.network "private_network", ip: "192.168.56.3"
+
+    spoke1.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+    spoke1.vm.provision "file" do |f|
+      f.source = "../microk8s-cluster/microk8s-install.sh"
+      f.destination = "./microk8s-install.sh"
+    end
+    
+    spoke1.vm.provision "shell" do |s|
+      s.inline = "chmod +x ./microk8s-install.sh && ./microk8s-install.sh"
+    end
+  end
+
+  config.vm.define "spoke2" do |spoke2|
+    spoke2.vm.box = "ubuntu/focal64"
+    spoke2.vm.hostname = "spoke2"
+    spoke2.vm.network "private_network", ip: "192.168.56.4"
+
+    spoke2.vm.provider "virtualbox" do |vb|
+      vb.memory = 2048
+      vb.cpus = 2
+    end
+
+    spoke2.vm.provision "file" do |f|
+      f.source = "../microk8s-cluster/microk8s-install.sh"
+      f.destination = "./microk8s-install.sh"
+    end
+    
+    spoke2.vm.provision "shell" do |s|
+      s.inline = "chmod +x ./microk8s-install.sh && ./microk8s-install.sh"
+    end
+  end
+
+end
