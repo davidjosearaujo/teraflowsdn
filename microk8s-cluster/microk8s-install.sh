@@ -44,3 +44,6 @@ mkdir -p /home/vagrant/.kube
 sudo chown -f -R vagrant /home/vagrant/.kube
 microk8s config > /home/vagrant/.kube/config
 sudo chown -f -R vagrant /home/vagrant/.kube
+
+microk8s start --wait-ready
+
