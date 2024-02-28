@@ -21,9 +21,9 @@ sudo ln -s /home/vagrant/expose-linkerd /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
 
 # Enable start on login
-echo "linkerd viz dashboard &" >> .profile
+#echo "linkerd viz dashboard &" >> .profile
 
 # Start dashboard
-linkerd viz dashboard &
+#linkerd viz dashboard &
 
-echo "Linkerd Viz dashboard running!"
+#echo "Linkerd Viz dashboard running!"

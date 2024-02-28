@@ -8,7 +8,6 @@ Vagrant.configure("2") do |config|
     controllerHub.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
     controllerHub.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
     controllerHub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
-    controllerHub.vm.hostname = "hub"
     controllerHub.vm.network "private_network", ip: "192.168.56.2"
     
     # Setup Linkerd Viz reverse proxy
@@ -24,7 +23,7 @@ Vagrant.configure("2") do |config|
 
     # Configure hostnames
     controllerHub.vm.provision "shell" do |s|
-      s.inline = "echo -e '192.168.56.2 hub\n192.168.56.3 spoke1\n192.168.56.4 spoke2' | sudo tee -a /etc/hosts"
+      s.inline = "echo -e '192.168.56.2 teraflowsdncontroller\n192.168.56.3 spoke1\n192.168.56.4 spoke2' | sudo tee -a /etc/hosts"
     end
 
     # Update controller source code to the desired branch
