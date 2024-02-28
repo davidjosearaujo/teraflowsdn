@@ -33,10 +33,14 @@ echo "192.168.56.2 hub" | sudo tee -a /etc/hosts
 echo "192.168.56.3 spoke1" | sudo tee -a /etc/hosts
 echo "192.168.56.4 spoke2" | sudo tee -a /etc/hosts
 
-sudo usermod -aG docker $USER
-sudo usermod -aG microk8s $USER 
-sudo chown -f -R $USER $HOME/.kube
-
 sudo snap install microk8s --classic --channel=1.24/stable
 
 sudo snap alias microk8s.kubectl kubectl
+
+sudo usermod -aG docker vagrant
+sudo usermod -aG microk8s vagrant
+
+mkdir -p /home/vagrant/.kube
+sudo chown -f -R vagrant /home/vagrant/.kube
+microk8s config > /home/vagrant/.kube/config
+sudo chown -f -R vagrant /home/vagrant/.kube
