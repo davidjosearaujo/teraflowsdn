@@ -63,5 +63,7 @@ if [ "contoller" == $(cat /etc/hostname) ]; then
     snap alias microk8s.linkerd linkerd
     linkerd check
 
-    git clone https://labs.etsi.org/rep/tfs/controller.git
+    mkdir /home/$K8_USER/tfs-ctrl
+    git clone https://labs.etsi.org/rep/tfs/controller.git /home/$K8_USER/tfs-ctrl
+    chown -f -R $K8_USER /home/$K8_USER/tfs-ctrl
 fi
