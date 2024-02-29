@@ -1,7 +1,8 @@
 Vagrant.configure("2") do |config|
   
   config.vm.define "controllerHub" do |controllerHub|
-    controllerHub.vm.box = "davidjosearaujo/teraflowsdncontroller"
+    controllerHub.vm.box = "ubuntu/focal64"
+  
     controllerHub.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
     controllerHub.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
     controllerHub.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
@@ -10,28 +11,30 @@ Vagrant.configure("2") do |config|
     controllerHub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
     controllerHub.vm.network "private_network", ip: "192.168.56.2"
     
+    controllerHub.vm.provider "virtualbox" do |vb|
+      vb.memory = 8192
+      vb.cpus = 4
+    end
+
+    controllerHub.vm.provision "file" do |f|
+      f.source = "../microk8s-cluster/microk8s-install.sh"
+      f.destination = "./microk8s-install.sh"
+    end
+
     # Setup Linkerd Viz reverse proxy
-    ## Copy config file
     controllerHub.vm.provision "file" do |f|
       f.source = "../deploy-tfs/reverse-proxy-linkerdviz.sh"
       f.destination = "./reverse-proxy-linkerdviz.sh"
     end
-    ## Execute configuration file
+
     controllerHub.vm.provision "shell" do |s|
       s.inline = "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
     end
 
-    # Configure hostnames
     controllerHub.vm.provision "shell" do |s|
-      s.inline = "echo -e '192.168.56.2 teraflowsdncontroller\n192.168.56.3 spoke1\n192.168.56.4 spoke2' | sudo tee -a /etc/hosts"
+      s.inline = "git clone https://labs.etsi.org/rep/tfs/controller.git"
     end
 
-    # Update controller source code to the desired branch
-    if ENV['BRANCH'] != nil
-      controllerHub.vm.provision "shell" do |s|
-        s.inline = "cd ./tfs-ctrl && git pull && git switch " + ENV['BRANCH']
-      end
-    end
   end
 
   config.vm.define "spoke1" do |spoke1|
