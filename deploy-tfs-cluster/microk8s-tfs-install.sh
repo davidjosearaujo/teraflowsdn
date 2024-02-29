@@ -56,13 +56,7 @@ newgrp microk8s
 microk8s start
 
 # If this host is the controller, install TFS dependencies and clone TFS repo
-if [ "contoller" == $(cat /etc/hostname) ]; then
-    microk8s.enable community
-    microk8s.enable dns helm3 hostpath-storage ingress registry prometheus metrics-server linkerd
-    snap alias microk8s.helm3 helm3
-    snap alias microk8s.linkerd linkerd
-    linkerd check
-
+if [ "controller" == $(cat /etc/hostname) ]; then
     mkdir /home/$K8_USER/tfs-ctrl
     git clone https://labs.etsi.org/rep/tfs/controller.git /home/$K8_USER/tfs-ctrl
     chown -f -R $K8_USER /home/$K8_USER/tfs-ctrl

@@ -1,30 +1,30 @@
 Vagrant.configure("2") do |config|
   
-  config.vm.define "controllerHub" do |controllerHub|
-    controllerHub.vm.box = "ubuntu/focal64"
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "ubuntu/focal64"
   
-    controllerHub.vm.hostname = "hub"
-    controllerHub.vm.network "private_network", ip: "192.168.56.2"
+    controller.vm.hostname = "controller"
+    controller.vm.network "private_network", ip: "192.168.56.2"
 
-    controllerHub.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
-    controllerHub.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
-    controllerHub.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
-    controllerHub.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
-    controllerHub.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
-    controllerHub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
+    controller.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
+    controller.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
+    controller.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
+    controller.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
+    controller.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
+    controller.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
     
-    controllerHub.vm.provider "virtualbox" do |v|
-      v.memory = 4096
+    controller.vm.provider "virtualbox" do |v|
+      v.memory = 3072
       v.cpus = 2
     end
 
     # Installing Microk8s
-    controllerHub.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
-    controllerHub.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
+    controller.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
+    controller.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
 
     # Setup Linkerd Viz reverse proxy
-    controllerHub.vm.provision "file", source: "../deploy-tfs/reverse-proxy-linkerdviz.sh", destination: "./reverse-proxy-linkerdviz.sh"
-    controllerHub.vm.provision "shell", inline: "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
+    controller.vm.provision "file", source: "../deploy-tfs/reverse-proxy-linkerdviz.sh", destination: "./reverse-proxy-linkerdviz.sh"
+    controller.vm.provision "shell", inline: "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
   end
 
   config.vm.define "spoke1" do |spoke1|
