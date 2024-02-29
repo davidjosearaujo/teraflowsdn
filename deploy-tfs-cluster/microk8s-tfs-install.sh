@@ -12,42 +12,42 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-sudo apt-get update -y
-sudo apt-get dist-upgrade -y
+apt-get update -y
+apt-get dist-upgrade -y
 
-sudo apt-get install -y ca-certificates curl gnupg lsb-release snapd jq
+apt-get install -y ca-certificates curl gnupg lsb-release snapd jq
 
-sudo apt-get install -y docker.io docker-buildx
+apt-get install -y docker.io docker-buildx
 
 if [ -s /etc/docker/daemon.json ]; then cat /etc/docker/daemon.json; else echo '{}'; fi \
     | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
     | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
     | tee tmp.daemon.json
-sudo mv tmp.daemon.json /etc/docker/daemon.json
-sudo chown root:root /etc/docker/daemon.json
-sudo chmod 600 /etc/docker/daemon.json
+mv tmp.daemon.json /etc/docker/daemon.json
+chown root:root /etc/docker/daemon.json
+chmod 600 /etc/docker/daemon.json
 
-sudo systemctl restart docker
+systemctl restart docker
 
 # Add nodes that may become part of the Microk8s cluster
 ## The controller where TFS will be installed must maintain the hostname 'controller'
-echo '192.168.56.2 controller' | sudo tee -a /etc/hosts
-echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
-echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
+echo '192.168.56.2 controller' | tee -a /etc/hosts
+echo '192.168.56.3 spoke1' | tee -a /etc/hosts
+echo '192.168.56.4 spoke2' | tee -a /etc/hosts
 
-sudo snap install microk8s --classic --channel=1.24/stable
+snap install microk8s --classic --channel=1.24/stable
 
-sudo snap alias microk8s.kubectl kubectl
+snap alias microk8s.kubectl kubectl
 
-sudo usermod -aG docker $USER
-sudo usermod -aG microk8s $USER
+usermod -aG docker $USER
+usermod -aG microk8s $USER
 
-sudo newgrp microk8s
-sudo newgrp docker
+newgrp microk8s
+newgrp docker
 
 mkdir -p $HOME/.kube
 microk8s config > $HOME/.kube/config
-sudo chown -f -R $USER $HOME/.kube
+chown -f -R $USER $HOME/.kube
 
 newgrp microk8s
 
@@ -57,8 +57,8 @@ microk8s start
 if [ "contoller" == $(cat /etc/hostname) ]; then
     microk8s.enable community
     microk8s.enable dns helm3 hostpath-storage ingress registry prometheus metrics-server linkerd
-    sudo snap alias microk8s.helm3 helm3
-    sudo snap alias microk8s.linkerd linkerd
+    snap alias microk8s.helm3 helm3
+    snap alias microk8s.linkerd linkerd
     linkerd check
 
     git clone https://labs.etsi.org/rep/tfs/controller.git
