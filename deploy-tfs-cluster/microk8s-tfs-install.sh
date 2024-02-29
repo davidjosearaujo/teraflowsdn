@@ -30,6 +30,7 @@ sudo chmod 600 /etc/docker/daemon.json
 sudo systemctl restart docker
 
 # Add nodes that may become part of the Microk8s cluster
+## The controller where TFS will be installed must maintain the hostname 'controller'
 echo '192.168.56.2 controller' | sudo tee -a /etc/hosts
 echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
 echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
@@ -38,16 +39,27 @@ sudo snap install microk8s --classic --channel=1.24/stable
 
 sudo snap alias microk8s.kubectl kubectl
 
-sudo usermod -aG docker vagrant
-sudo usermod -aG microk8s vagrant
+sudo usermod -aG docker $USER
+sudo usermod -aG microk8s $USER
 
 sudo newgrp microk8s
 sudo newgrp docker
 
-mkdir -p /home/vagrant/.kube
-microk8s config > /home/vagrant/.kube/config
-sudo chown -f -R vagrant /home/vagrant/.kube
+mkdir -p $HOME/.kube
+microk8s config > $HOME/.kube/config
+sudo chown -f -R $USER $HOME/.kube
 
 newgrp microk8s
 
 microk8s start
+
+# If this host is the controller, install TFS dependencies and clone TFS repo
+if [ "contoller" == $(cat /etc/hostname) ]; then
+    microk8s.enable community
+    microk8s.enable dns helm3 hostpath-storage ingress registry prometheus metrics-server linkerd
+    sudo snap alias microk8s.helm3 helm3
+    sudo snap alias microk8s.linkerd linkerd
+    linkerd check
+
+    git clone https://labs.etsi.org/rep/tfs/controller.git
+fi

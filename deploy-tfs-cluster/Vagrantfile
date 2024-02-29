@@ -3,78 +3,60 @@ Vagrant.configure("2") do |config|
   config.vm.define "controllerHub" do |controllerHub|
     controllerHub.vm.box = "ubuntu/focal64"
   
+    controllerHub.vm.hostname = "hub"
+    controllerHub.vm.network "private_network", ip: "192.168.56.2"
+
     controllerHub.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
     controllerHub.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
     controllerHub.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
     controllerHub.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
     controllerHub.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
     controllerHub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
-    controllerHub.vm.network "private_network", ip: "192.168.56.2"
     
-    controllerHub.vm.provider "virtualbox" do |vb|
-      vb.memory = 8192
-      vb.cpus = 4
+    controllerHub.vm.provider "virtualbox" do |v|
+      v.memory = 4096
+      v.cpus = 2
     end
 
-    controllerHub.vm.provision "file" do |f|
-      f.source = "../microk8s-cluster/microk8s-install.sh"
-      f.destination = "./microk8s-install.sh"
-    end
+    # Installing Microk8s
+    spoke1.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
+    controllerHub.vm.provision "shell", privileged: false, inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
 
     # Setup Linkerd Viz reverse proxy
-    controllerHub.vm.provision "file" do |f|
-      f.source = "../deploy-tfs/reverse-proxy-linkerdviz.sh"
-      f.destination = "./reverse-proxy-linkerdviz.sh"
-    end
-
-    controllerHub.vm.provision "shell" do |s|
-      s.inline = "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
-    end
-
-    controllerHub.vm.provision "shell" do |s|
-      s.inline = "git clone https://labs.etsi.org/rep/tfs/controller.git"
-    end
-
+    controllerHub.vm.provision "file", source: "../deploy-tfs/reverse-proxy-linkerdviz.sh", destination: "./reverse-proxy-linkerdviz.sh"
+    controllerHub.vm.provision "shell", privileged: false, inline: "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
   end
 
   config.vm.define "spoke1" do |spoke1|
     spoke1.vm.box = "ubuntu/focal64"
+
     spoke1.vm.hostname = "spoke1"
     spoke1.vm.network "private_network", ip: "192.168.56.3"
 
-    spoke1.vm.provider "virtualbox" do |vb|
-      vb.memory = 2048
-      vb.cpus = 2
+    spoke1.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 1
     end
 
-    spoke1.vm.provision "file" do |f|
-      f.source = "../microk8s-cluster/microk8s-install.sh"
-      f.destination = "./microk8s-install.sh"
-    end
-    
-    spoke1.vm.provision "shell" do |s|
-      s.inline = "chmod +x ./microk8s-install.sh && ./microk8s-install.sh"
-    end
+    # Installing Microk8s
+    spoke1.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
+    controllerHub.vm.provision "shell", privileged: false, inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
   end
 
   config.vm.define "spoke2" do |spoke2|
     spoke2.vm.box = "ubuntu/focal64"
+
     spoke2.vm.hostname = "spoke2"
     spoke2.vm.network "private_network", ip: "192.168.56.4"
 
-    spoke2.vm.provider "virtualbox" do |vb|
-      vb.memory = 2048
-      vb.cpus = 2
+    spoke2.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 1
     end
 
-    spoke2.vm.provision "file" do |f|
-      f.source = "../microk8s-cluster/microk8s-install.sh"
-      f.destination = "./microk8s-install.sh"
-    end
-    
-    spoke2.vm.provision "shell" do |s|
-      s.inline = "chmod +x ./microk8s-install.sh && ./microk8s-install.sh"
-    end
+    # Installing Microk8s
+    spoke1.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
+    controllerHub.vm.provision "shell", privileged: false, inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
   end
 
 end
