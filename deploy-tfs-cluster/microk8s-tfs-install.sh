@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+K8_USER=$1
+
 apt-get update -y
 apt-get dist-upgrade -y
 
@@ -39,15 +41,15 @@ snap install microk8s --classic --channel=1.24/stable
 
 snap alias microk8s.kubectl kubectl
 
-usermod -aG docker $USER
-usermod -aG microk8s $USER
+usermod -aG docker $K8_USER
+usermod -aG microk8s $K8_USER
 
 newgrp microk8s
 newgrp docker
 
-mkdir -p $HOME/.kube
-microk8s config > $HOME/.kube/config
-chown -f -R $USER $HOME/.kube
+mkdir -p /home/$K8_USER/.kube
+microk8s config > /home/$K8_USER/.kube/config
+chown -f -R $K8_USER /home/$K8_USER/.kube
 
 newgrp microk8s
 

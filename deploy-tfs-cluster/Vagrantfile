@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
 
     # Installing Microk8s
     controllerHub.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
-    controllerHub.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
+    controllerHub.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
 
     # Setup Linkerd Viz reverse proxy
     controllerHub.vm.provision "file", source: "../deploy-tfs/reverse-proxy-linkerdviz.sh", destination: "./reverse-proxy-linkerdviz.sh"
@@ -40,7 +40,7 @@ Vagrant.configure("2") do |config|
 
     # Installing Microk8s
     spoke1.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
-    spoke1.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
+    spoke1.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
   end
 
   config.vm.define "spoke2" do |spoke2|
@@ -56,7 +56,7 @@ Vagrant.configure("2") do |config|
 
     # Installing Microk8s
     spoke2.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
-    spoke2.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh"
+    spoke2.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
   end
 
 end
