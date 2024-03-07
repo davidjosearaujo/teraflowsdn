@@ -61,4 +61,6 @@ if [ "hub" == $(cat /etc/hostname) ]; then
     mkdir /home/$USER/tfs-ctrl
     git clone https://labs.etsi.org/rep/tfs/controller.git /home/$USER/tfs-ctrl
     chown -f -R $USER /home/$USER/tfs-ctrl
+else
+    kubectl label nodes app.kubernetes.io/instance=cockroachdb
 fi
