@@ -30,7 +30,7 @@ sudo chmod 600 /etc/docker/daemon.json
 sudo systemctl restart docker
 
 # Add nodes that may become part of the Microk8s cluster
-echo '192.168.56.2 controller' | sudo tee -a /etc/hosts
+echo '192.168.56.2 hub' | sudo tee -a /etc/hosts
 echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
 echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
 
@@ -41,13 +41,6 @@ sudo snap alias microk8s.kubectl kubectl
 sudo usermod -aG docker vagrant
 sudo usermod -aG microk8s vagrant
 
-sudo newgrp microk8s
-sudo newgrp docker
-
 mkdir -p /home/vagrant/.kube
 microk8s config > /home/vagrant/.kube/config
 sudo chown -f -R vagrant /home/vagrant/.kube
-
-newgrp microk8s
-
-microk8s start
