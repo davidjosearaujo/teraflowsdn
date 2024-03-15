@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-INTERFACE="eth0"
-IP=$(ip -br -4 a | grep $INTERFACE | awk -F ' ' '{ print $3 }' | rev | cut -c 4- | rev)
+# Needed for updating certificates (not needed for Vagrant)
+#INTERFACE="eth0"
+#IP=$(ip -br -4 a | grep $INTERFACE | awk -F ' ' '{ print $3 }' | rev | cut -c 4- | rev)
 
 sudo dpkg --configure -a
 sudo apt-get update -y
@@ -23,7 +24,6 @@ sudo apt-get dist-upgrade -y
 sudo apt-get install -y ca-certificates curl gnupg lsb-release snapd jq
 
 sudo apt-get install -y docker.io docker-buildx
-
 
 if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
     | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
@@ -37,9 +37,9 @@ sudo systemctl restart docker
 
 # Add nodes that may become part of the Microk8s cluster
 ## The controller where TFS will be installed must maintain the hostname 'hub'
-echo '10.255.32.105 hub' | sudo tee -a /etc/hosts
-echo '10.255.32.103 spoke1' | sudo tee -a /etc/hosts
-echo '10.255.32.129 spoke2' | sudo tee -a /etc/hosts
+echo '192.168.56.2 hub' | sudo tee -a /etc/hosts
+echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
+echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
 
 sudo snap install microk8s --classic --channel=1.24/stable
 
@@ -48,9 +48,9 @@ sudo snap alias microk8s.kubectl kubectl
 sudo usermod -aG docker $USER
 sudo usermod -aG microk8s $USER
 
-# Update certificates
-sudo sed -i "s/#MOREIPS/IP.3 = $IP/g" /var/snap/microk8s/current/certs/csr.conf.template
-sudo microk8s refresh-certs -e ca.crt
+# Update certificates (not needed for Vagrant)
+#sudo sed -i "s/#MOREIPS/IP.3 = $IP/g" /var/snap/microk8s/current/certs/csr.conf.template
+#sudo microk8s refresh-certs -e ca.crt
 
 sudo mkdir -p /home/$USER/.kube
 sudo microk8s config > /home/$USER/.kube/config
@@ -61,6 +61,4 @@ if [ "hub" == $(cat /etc/hostname) ]; then
     mkdir /home/$USER/tfs-ctrl
     git clone https://labs.etsi.org/rep/tfs/controller.git /home/$USER/tfs-ctrl
     chown -f -R $USER /home/$USER/tfs-ctrl
-else
-    kubectl label nodes app.kubernetes.io/instance=cockroachdb
 fi
