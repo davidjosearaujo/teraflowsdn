@@ -1,3 +1,53 @@
+$linkerdReverseProxy = <<-'SCRIPT'
+sudo apt update && sudo apt install nginx -y
+echo 'server {
+    listen 8084;
+
+    location / {
+        proxy_pass http://127.0.0.1:50750;
+        proxy_set_header Host localhost;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}' > /home/vagrant/expose-linkerd									# NGINX reverse proxy configuration
+sudo ln -s /home/vagrant/expose-linkerd /etc/nginx/sites-enabled/	# Create symlink of the NGINX configuration file
+sudo systemctl restart nginx										# Commit the reverse proxy configurations
+echo "linkerd viz dashboard &" >> .profile							# Enable start on login
+SCRIPT
+
+$microk8sTfsInstall = <<-'SCRIPT'
+sudo dpkg --configure -a
+sudo apt-get update -y
+sudo apt --fix-broken install -y
+sudo apt-get dist-upgrade -y
+sudo apt-get install -y ca-certificates curl gnupg lsb-release snapd jq
+sudo apt-get install -y docker.io docker-buildx
+if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
+    | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
+    | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
+    | tee tmp.daemon.json
+sudo mv tmp.daemon.json /etc/docker/daemon.json
+sudo chown root:root /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
+sudo systemctl restart docker
+echo '192.168.56.2 hub' | sudo tee -a /etc/hosts
+echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
+echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
+sudo snap install microk8s --classic --channel=1.24/stable
+sudo snap alias microk8s.kubectl kubectl
+sudo usermod -aG docker $USER
+sudo usermod -aG microk8s $USER
+sudo mkdir -p /home/$USER/.kube
+sudo microk8s config > /home/$USER/.kube/config
+sudo chown -f -R $USER /home/$USER/.kube
+if [ "hub" == $(cat /etc/hostname) ]; then
+    mkdir /home/$USER/tfs-ctrl
+    git clone https://labs.etsi.org/rep/tfs/controller.git /home/$USER/tfs-ctrl
+    chown -f -R $USER /home/$USER/tfs-ctrl
+fi
+SCRIPT
+
 Vagrant.configure("2") do |config|
   
   config.vm.define "hub" do |hub|
@@ -19,12 +69,11 @@ Vagrant.configure("2") do |config|
     end
 
     # Installing Microk8s
-    hub.vm.provision "file", source: "./microk8s-tfs-install.sh", destination: "./microk8s-tfs-install.sh"
-    hub.vm.provision "shell", inline: "chmod +x ./microk8s-tfs-install.sh && ./microk8s-tfs-install.sh vagrant"
+    hub.vm.provision "shell", inline: $microk8sTfsInstall
 
     # Setup Linkerd Viz reverse proxy
-    hub.vm.provision "file", source: "../deploy-tfs/reverse-proxy-linkerdviz.sh", destination: "./reverse-proxy-linkerdviz.sh"
-    hub.vm.provision "shell", inline: "chmod +x ./reverse-proxy-linkerdviz.sh && ./reverse-proxy-linkerdviz.sh"
+    hub.vm.provision "shell", inline: $linkerdReverseProxy
+    
   end
 
   config.vm.define "spoke1" do |spoke1|
