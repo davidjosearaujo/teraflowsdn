@@ -1,9 +1,8 @@
-#!/bin/sh:
+#!/bin/bash
 
 sudo dpkg --configure -a
 sudo apt-get update -y
 sudo apt --fix-broken install -y
-sudo apt-get dist-upgrade -y
 
 sudo apt-get install -y ca-certificates curl gnupg lsb-release snapd jq docker.io docker-buildx
 
@@ -17,9 +16,9 @@ sudo chmod 600 /etc/docker/daemon.json
 
 sudo systemctl restart docker
 
-echo '192.168.56.2 hub' | sudo tee -a /etc/hosts
-echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
-echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
+echo '10.255.32.133 hub' | sudo tee -a /etc/hosts
+echo '10.255.32.134 spoke1' | sudo tee -a /etc/hosts
+echo '10.255.32.110 spoke2' | sudo tee -a /etc/hosts
 
 sudo snap install microk8s --classic --channel=1.24/stable
 sudo snap alias microk8s.kubectl kubectl
