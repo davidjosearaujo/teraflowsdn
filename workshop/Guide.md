@@ -55,6 +55,7 @@ To achieve a robust and resilient deployment of TFS, we focused primarily on:
 3. Horizontal Pod autoscaling
 
 We will review this concepts along the deployment of TFS.
+
 ---
 
 ## Node clustering
