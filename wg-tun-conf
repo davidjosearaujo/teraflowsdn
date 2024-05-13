@@ -1,0 +1,9 @@
+[Interface]
+ListenPort = 56806
+PrivateKey = kA3+Ae3i7uWAdjeeBZeZ1dMTt4x4GWIFm/hiyWg4YWs=
+
+[Peer]
+PublicKey = OZgJA31N/uk20rkr+auIsvC7Z/s9WAxr1zKgdEY01io=
+AllowedIPs = 172.0.0.0/8
+Endpoint = 10.255.32.133:43732
+PersistentKeepalive = 10
