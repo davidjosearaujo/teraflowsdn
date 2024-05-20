@@ -22,17 +22,17 @@ $ cd ~/tfs-ctrl/hackfest/containerlab
 $ sudo containerlab deploy --topo tfs-scenario.clab.yml
 
 ## Access SR Bash
-$ docker exec -it clab-tfs-scenario-srl1 bash
+$ docker exec -it 172.100.100.101 bash
 
 ## Access SR CLI
-$ docker exec -it clab-tfs-scenario-srl1 sr_cli
+$ docker exec -it 172.100.100.101 sr_cli
 
 ## Destroy scenario
 $ sudo containerlab destroy --topo tfs-scenario.clab.yml
 
 
 ## Enable OpenConfig data models and set as default:
-$ docker exec -it clab-tfs-scenario-srl1 sr_cli
+$ docker exec -it 172.100.100.101 sr_cli
 # enter candidate
 # system management openconfig admin-state enable
 # system gnmi-server network-instance mgmt yang-models openconfig
@@ -60,24 +60,24 @@ docker exec -it clab-tfs-scenario-client2 bash
 $ sudo bash -c "$(curl -sL https://get-gnmic.kmrd.dev)"
 
 ## gNMI Capabilities request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify capabilities
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify capabilities
 
 ## gNMI Get request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
 
 
 ## gNMI Set request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
 
 (we check the changed value)
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
 
 ## Subscribe request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
+$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
 
 (In another terminal, you can generate traffic) 
-$ssh admin@clab-tfs-scenario-srl1
+$ssh admin@172.100.100.101
 
 
 
