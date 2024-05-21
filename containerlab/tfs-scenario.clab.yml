@@ -19,7 +19,7 @@ name: tfs-scenario
 
 mgmt:
   network: mgmt-net
-  ipv4-subnet: 172.100.100.0/24
+  ipv4-subnet: 172.99.99.0/24
 topology:
   kinds:
     nokia_srlinux:
@@ -32,20 +32,20 @@ topology:
       type: ixr6
       cpu: 0.5
       memory: 1GB
-      mgmt-ipv4: 172.100.100.101
+      mgmt-ipv4: 172.99.99.101
       startup-config: srl1.cli
     srl2:
       kind: nokia_srlinux
       type: ixr6
       cpu: 0.5
       memory: 1GB
-      mgmt-ipv4: 172.100.100.102
+      mgmt-ipv4: 172.99.99.102
       startup-config: srl2.cli
     client1:
       kind: linux
       cpu: 0.1
       memory: 100MB
-      mgmt-ipv4: 172.100.100.201
+      mgmt-ipv4: 172.99.99.201
       exec:
         - ip address add 172.16.1.10/24 dev eth1
         - ip route add 172.16.2.0/24 via 172.16.1.1
@@ -53,7 +53,7 @@ topology:
       kind: linux
       cpu: 0.1
       memory: 100MB
-      mgmt-ipv4: 172.100.100.202
+      mgmt-ipv4: 172.99.99.202
       exec:
         - ip address add 172.16.2.10/24 dev eth1
         - ip route add 172.16.1.0/24 via 172.16.2.1

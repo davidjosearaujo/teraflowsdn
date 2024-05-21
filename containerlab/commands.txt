@@ -22,17 +22,17 @@ $ cd ~/tfs-ctrl/hackfest/containerlab
 $ sudo containerlab deploy --topo tfs-scenario.clab.yml
 
 ## Access SR Bash
-$ docker exec -it 172.100.100.101 bash
+$ docker exec -it clab-tfs-scenario-srl1 bash
 
 ## Access SR CLI
-$ docker exec -it 172.100.100.101 sr_cli
+$ docker exec -it clab-tfs-scenario-srl1 sr_cli
 
 ## Destroy scenario
 $ sudo containerlab destroy --topo tfs-scenario.clab.yml
 
 
 ## Enable OpenConfig data models and set as default:
-$ docker exec -it 172.100.100.101 sr_cli
+$ docker exec -it clab-tfs-scenario-srl1 sr_cli
 # enter candidate
 # system management openconfig admin-state enable
 # system gnmi-server network-instance mgmt yang-models openconfig
@@ -60,42 +60,42 @@ docker exec -it clab-tfs-scenario-client2 bash
 $ sudo bash -c "$(curl -sL https://get-gnmic.kmrd.dev)"
 
 ## gNMI Capabilities request
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify capabilities
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify capabilities
 
 ## gNMI Get request
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
 
 
 ## gNMI Set request
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
 
 (we check the changed value)
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
 
 ## Subscribe request
-$ gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
 
 (In another terminal, you can generate traffic) 
-$ssh admin@172.100.100.101
+$ssh admin@clab-tfs-scenario-srl1
 
 
 
 
 # Check configurations done:
-gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl1-nis.json
-gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl1-ifs.json
-gnmic -a 172.100.100.102 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl2-nis.json
-gnmic -a 172.100.100.102 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl2-ifs.json
+gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl1-nis.json
+gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl1-ifs.json
+gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl2-nis.json
+gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl2-ifs.json
 
 
 # Delete elements:
-gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
-gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
-gnmic -a 172.100.100.101 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
-gnmic -a 172.100.100.102 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
-gnmic -a 172.100.100.102 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
-gnmic -a 172.100.100.102 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
 
 # Run gNMI Driver in standalone mode (advanced)
 PYTHONPATH=./src python -m src.device.tests.test_gnmi
