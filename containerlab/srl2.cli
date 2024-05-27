@@ -1,16 +1,16 @@
 set / interface ethernet-1/2 admin-state enable
-set / interface ethernet-1/2 subinterface 0 admin-state enable
+set / interface ethernet-1/2 subinterface 0 ipv4 admin-state enable
 set / interface ethernet-1/2 subinterface 0 ipv4 address 172.16.2.1/24
 
 set / interface ethernet-1/1 admin-state enable
-set / interface ethernet-1/1 subinterface 0 admin-state enable
+set / interface ethernet-1/1 subinterface 0 ipv4 admin-state enable
 set / interface ethernet-1/1 subinterface 0 ipv4 address 172.0.0.2/30
 
-set / network-instance default
 set / network-instance default interface ethernet-1/1.0
 set / network-instance default interface ethernet-1/2.0
 
 set / network-instance default next-hop-groups group group1 nexthop 1 ip-address 172.0.0.1 admin-state enable
 set / network-instance default static-routes route 172.16.1.0/24 next-hop-group group1 admin-state enable
 
-set / system gnmi-server network-instance mgmt admin-state enable
+set / system management openconfig admin-state enable
+set / system gnmi-server network-instance mgmt yang-models openconfig
