@@ -23,7 +23,7 @@ mgmt:
 topology:
   kinds:
     nokia_srlinux:
-      image: ghcr.io/nokia/srlinux:21.11.3
+      image: ghcr.io/nokia/srlinux:23.3.1
     linux:
       image: ghcr.io/hellt/network-multitool
   nodes:
