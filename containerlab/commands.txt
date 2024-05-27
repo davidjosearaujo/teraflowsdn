@@ -60,21 +60,21 @@ docker exec -it clab-tfs-scenario-client2 bash
 $ sudo bash -c "$(curl -sL https://get-gnmic.kmrd.dev)"
 
 ## gNMI Capabilities request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify capabilities
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify capabilities
 
 ## gNMI Get request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path /interfaces/interface[name=mgmt0]
 
 
 ## gNMI Set request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --update-path /system/config/hostname --update-value srl11
 
 (we check the changed value)
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path /system/config/hostname
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path /system/config/hostname
 
 ## Subscribe request
-$ gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
+$ gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf subscribe --path /interfaces/interface[name=mgmt0]/state/
 
 (In another terminal, you can generate traffic) 
 $ssh admin@clab-tfs-scenario-srl1
@@ -83,19 +83,19 @@ $ssh admin@clab-tfs-scenario-srl1
 
 
 # Check configurations done:
-gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl1-nis.json
-gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl1-ifs.json
-gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf get --path '/network-instances' > srl2-nis.json
-gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf get --path '/interfaces' > srl2-ifs.json
+gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path '/network-instances' > srl1-nis.json
+gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path '/interfaces' > srl1-ifs.json
+gnmic -a clab-tfs-scenario-srl2 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path '/network-instances' > srl2-nis.json
+gnmic -a clab-tfs-scenario-srl2 -u admin -p NokiaSrl1! --skip-verify -e json_ietf get --path '/interfaces' > srl2-ifs.json
 
 
 # Delete elements:
-gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
-gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
-gnmic -a clab-tfs-scenario-srl1 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
-gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
-gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
-gnmic -a clab-tfs-scenario-srl2 -u admin -p admin --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl1 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/network-instances/network-instance[name=b19229e8]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/1]/subinterfaces/subinterface[index=0]'
+gnmic -a clab-tfs-scenario-srl2 -u admin -p NokiaSrl1! --skip-verify -e json_ietf set --delete '/interfaces/interface[name=ethernet-1/2]/subinterfaces/subinterface[index=0]'
 
 # Run gNMI Driver in standalone mode (advanced)
 PYTHONPATH=./src python -m src.device.tests.test_gnmi
