@@ -1,5 +1,5 @@
 set / interface ethernet-1/2 admin-state enable
-set / interface ethernet-1/2 subinterface 0 pv4 admin-state enable
+set / interface ethernet-1/2 subinterface 0 ipv4 admin-state enable
 set / interface ethernet-1/2 subinterface 0 ipv4 address 172.16.1.1/24
 
 set / interface ethernet-1/1 admin-state enable
