@@ -21,6 +21,8 @@ echo '10.255.32.133 hub' | sudo tee -a /etc/hosts
 echo '10.255.32.134 spoke1' | sudo tee -a /etc/hosts
 echo '10.255.32.110 spoke2' | sudo tee -a /etc/hosts
 
+sudo ip route add 172.100.100.0/24 via 10.255.32.113
+
 sudo snap install microk8s --classic --channel=1.24/stable
 sudo snap alias microk8s.kubectl kubectl
 
