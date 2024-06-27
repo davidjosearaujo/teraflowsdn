@@ -46,17 +46,23 @@ topology:
       cpu: 0.1
       memory: 100MB
       mgmt-ipv4: 172.100.100.201
+      binds:
+        - ./iperf3-server:/host
       exec:
         - ip address add 172.16.1.10/24 dev eth1
         - ip route add 172.16.2.0/24 via 172.16.1.1
+        - bash /host/iperf3-server.sh
     client2:
       kind: linux
       cpu: 0.1
       memory: 100MB
       mgmt-ipv4: 172.100.100.202
+      binds:
+        - ./iperf3-client:/host
       exec:
         - ip address add 172.16.2.10/24 dev eth1
         - ip route add 172.16.1.0/24 via 172.16.2.1
+        - bash /host/iperf3-client.sh
 
   links:
     - endpoints: ["srl1:e1-1", "srl2:e1-1"]
