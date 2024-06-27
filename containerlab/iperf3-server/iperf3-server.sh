@@ -15,4 +15,4 @@
 #!/bin/bash
 
 touch /host/server.log
-iperf3 -s -A 1 -p 8081 >> /host/server.log
+iperf3 -s -p 8081 >> /host/server.log

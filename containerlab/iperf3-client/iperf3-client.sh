@@ -21,9 +21,9 @@ CONNECTION_STATUS=1
 while [ $CONNECTION_STATUS -eq 1 ]
 do
     # Give time for SRLinux node to stablish links
-    sleep 60
+    sleep 30
 
-    iperf3 -c 172.16.1.10 -p 8081 -bidir -t 60 --logfile /host/results.json --forceflush -J    
+    iperf3 -c 172.16.1.10 -p 8081 -t 60 -u --bidir --logfile /host/results.json -J
     CONNECTION_STATUS=$?
     echo "Connection status: $CONNECTION_STATUS" >> /host/client.log
 done
