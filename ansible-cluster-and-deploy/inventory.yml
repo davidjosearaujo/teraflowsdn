@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-inventory:
-    microk8s:
-        hosts:
-            hub:
-                ansible_host: 10.255.32.48
-            spoke1:
-                ansible_host: 10.255.32.61
-        vars:
-            ansible_ssh_private_key_file: ~/MEGA/it/id_rsa
-            ansible_user: davidaraujo
-            ansible_password: 9SZH8pRcwpJqjH
+nodes:
+    hosts:
+        hub:
+            ansible_host: 10.255.32.48
+        spoke1:
+            ansible_host: 10.255.32.61
+    vars:
+        ansible_ssh_private_key_file: ~/MEGA/it/id_rsa
+        ansible_password: 9SZH8pRcwpJqjH
