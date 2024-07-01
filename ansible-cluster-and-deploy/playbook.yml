@@ -19,16 +19,10 @@
   remote_user: "{{ ansible_user }}"
 
   tasks:
-    - name: Verify variables and facts
-      ansible.builtin.debug:
-        var: hostvars[inventory_hostname]
-        verbosity: 4
-        msg: "{{ hostvars[inventory_hostname] }}"
-
     - name: Install dependencies
       ansible.builtin.apt:
         pkg:
-          - ca-certifictes
+          - ca-certificates
           - curl
           - gnupg
           - lsb-release
@@ -41,7 +35,6 @@
 
     - name: Update Docker daemon.json with insecure-registries
       ansible.builtin.shell: |
-        set -o pipefail
         if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
           | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
           | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
@@ -51,6 +44,7 @@
 
     - name: Copy tmp.daemon.json
       ansible.builtin.copy:
+        remote_src: true
         src: tmp.daemon.json
         dest: /etc/docker/daemon.json
         owner: root
@@ -71,10 +65,16 @@
       when: hostvars[item].ansible_host is defined
       with_items: "{{ groups.all }}"
 
+    - name: Find the Containerlab host IP
+      ansible.builtin.set_fact:
+        containerlab_host_address: "{{ hostvars[item].ansible_host }}"
+      when: hostvars[item].containerlab_host is defined
+      with_items: "{{ groups['all'] }}"
+      run_once: true
+
     - name: Specify ip route to Containerlab network
-      ansible.builtin.command: sudo ip route add 172.100.100.0/24 via {{ hostvars[item].ansible_host }}
-      when: containerlab_host is undefined
-      with_items: "{{ hostvars | dict2items | selectattr('value.containerlab_host', 'eq', 'true') | map(attribute='value.ansible_host') | list }}"
+      ansible.builtin.command: sudo ip route add 172.100.100.0/24 via {{ containerlab_host_address }}
+      when: hostvars[inventory_hostname].containerlab_host is not defined
       register: out
       changed_when: out.rc != 0
 
@@ -113,6 +113,7 @@
 
     - name: Keep microk8s config
       ansible.builtin.copy:
+        remote_src: true
         content: "{{ microk8s_config.stdout }}"
         dest: /home/{{ ansible_user }}/.kube/config
         mode: "0644"

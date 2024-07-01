@@ -15,12 +15,13 @@
 
 nodes:
   hosts:
-    spoke1:
-      ansible_host: 10.255.32.48
+    hub:
+      ansible_host: 192.168.56.10
       containerlab_host: true
+    spoke1:
+      ansible_host: 192.168.56.11
     spoke2:
-      ansible_host: 10.255.32.61
+      ansible_host: 192.168.56.12
   vars:
-    ansible_ssh_private_key_file: ~/MEGA/it/id_rsa
-    ansible_user: davidaraujo
-    ansible_password: 9SZH8pRcwpJqjH
+    ansible_ssh_private_key_file: ./ssh_key.pem
+    ansible_user: vagrant

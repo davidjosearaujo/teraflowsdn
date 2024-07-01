@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.define "hub" do |hub|
+    hub.vm.box = "ubuntu/focal64"
+    hub.vm.hostname = "hub"
+    hub.vm.network "private_network", ip: "192.168.56.10"
+    hub.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+    end
+    hub.vm.provision "file", source: "./ssh_key.pub", destination: "/home/vagrant/.ssh/host.pub"
+    hub.vm.provision "shell", inline: "cat /home/vagrant/.ssh/host.pub >> /home/vagrant/.ssh/authorized_keys"
+  end
+
+  config.vm.define "spoke1" do |spoke1|
+    spoke1.vm.box = "ubuntu/focal64"
+    spoke1.vm.hostname = "spoke1"
+    spoke1.vm.network "private_network", ip: "192.168.56.11"
+    spoke1.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+    end
+    spoke1.vm.provision "file", source: "./ssh_key.pub", destination: "/home/vagrant/.ssh/host.pub"
+    spoke1.vm.provision "shell", inline: "cat /home/vagrant/.ssh/host.pub >> /home/vagrant/.ssh/authorized_keys"
+  end
+
+  config.vm.define "spoke2" do |spoke2|
+    spoke2.vm.box = "ubuntu/focal64"
+    spoke2.vm.hostname = "spoke2"
+    spoke2.vm.network "private_network", ip: "192.168.56.12"
+    spoke2.vm.provider "virtualbox" do |v|
+        v.memory = 1024
+        v.cpus = 1
+      end
+    spoke2.vm.provision "file", source: "./ssh_key.pub", destination: "/home/vagrant/.ssh/host.pub"
+    spoke2.vm.provision "shell", inline: "cat /home/vagrant/.ssh/host.pub >> /home/vagrant/.ssh/authorized_keys"
+  end
+end
