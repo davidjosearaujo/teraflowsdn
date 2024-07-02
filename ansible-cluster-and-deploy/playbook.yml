@@ -126,5 +126,56 @@
         line: IP.3 = {{ ansible_host }}
         state: present
 
-# TODO
-# - Setup MicroK8s cluster
+- name: Forming MicroK8s cluster
+  hosts: all
+  become: true
+  remote_user: "{{ ansible_user }}"
+
+  tasks:
+    - name: MicroK8s add-node
+      ansible.builtin.command: microk8s add-node | grep -m 1 {{ ansible_host }}
+      register: join_command
+      delegate_to: "{{ item }}"
+      when: hostvars[item].microk8s_master is defined
+      with_items: "{{ groups['all'] }}"
+
+    - name: MicroK8s join-node
+      ansible.builtin.command: "{{ join_command.stdout }}"
+      when: hostvars[item].microk8s_master is not defined
+
+    - name: MicroK8s refresh certificate
+      ansible.builtin.command: microk8s refresh-certs -e ca.crt
+      when: hostvars[item].microk8s_master is not defined
+
+    - name: MicroK8s refresh config file
+      ansible.builtin.command: microk8s config > /home/$USER/.kube/config
+      when: hostvars[item].microk8s_master is not defined
+
+- name: Enabling MicroK8s add-ons
+  hosts: all
+  become: true
+  remote_user: "{{ ansible_user }}"
+
+  tasks:
+    - name: Enable add-ons
+      ansible.builtin.command: microk8s.enable {{ item }}
+      loop:
+        - community
+        - dns
+        - helm3
+        - hostpath-storage
+        - ingress
+        - registry
+        - prometheus
+        - metrics-server
+        - linkerd
+
+    - name: Create kubectl helm3 alias
+      community.general.snap_alias:
+        name: microk8s.helm3
+        alias: helm3
+
+    - name: Create kubectl linkerdalias
+      community.general.snap_alias:
+        name: microk8s.linkerd
+        alias: linkerd

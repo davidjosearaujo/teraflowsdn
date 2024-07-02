@@ -1,12 +1,12 @@
 ---
 # Copyright 2024 David Araújo
-#
+# 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-#
+# 
 #     https://www.apache.org/licenses/LICENSE-2.0
-#
+# 
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,11 +16,14 @@
 nodes:
   hosts:
     hub:
-      ansible_host: 192.168.56.10
+      ansible_host: 10.255.32.
       containerlab_host: true
+      microk8s_master: true
     spoke1:
-      ansible_host: 192.168.56.11
+      ansible_host: 10.255.32.
     spoke2:
-      ansible_host: 192.168.56.12
+      ansible_host: 10.255.32.61
   vars:
-    ansible_user: vagrant
+    ansible_user: davidaraujo
+    ansible_ssh_private_key_file: ./proxmox_keys/ssh_key.pem
+    ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new
