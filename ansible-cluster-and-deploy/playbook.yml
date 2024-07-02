@@ -118,11 +118,13 @@
         dest: /home/{{ ansible_user }}/.kube/config
         mode: "0644"
       register: out
-      changed_when: out.rc != 0
 
     - name: Add IP address to microk8s certificate template
       ansible.builtin.lineinfile:
         dest: /var/snap/microk8s/current/certs/csr.conf.template
-        search_string: "#MOREIPS="
+        search_string: "#MOREIPS"
         line: IP.3 = {{ ansible_host }}
         state: present
+
+# TODO
+# - Setup MicroK8s cluster
