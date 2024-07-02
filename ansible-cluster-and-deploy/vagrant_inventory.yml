@@ -18,6 +18,7 @@ nodes:
     hub:
       ansible_host: 192.168.56.10
       containerlab_host: true
+      microk8s_master: true
     spoke1:
       ansible_host: 192.168.56.11
     spoke2:

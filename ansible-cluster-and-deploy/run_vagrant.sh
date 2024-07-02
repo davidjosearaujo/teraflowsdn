@@ -20,6 +20,6 @@ ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.12"
 
 vagrant up
 
-sleep 20
+sleep 120
 
-ansible-playbook -i inventory.yml playbook.yml
+ansible-playbook -i vagrant_inventory.yml playbook.yml
