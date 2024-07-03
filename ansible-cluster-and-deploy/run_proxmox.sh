@@ -12,23 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-echo "[!] Destroying existing Vagrant machines"
-vagrant destroy -f --parallel
-
-echo -e "\n[!] Removing destroyed hosts from known hosts"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.10"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.11"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.12"
-
-echo -e "\n[+] Creating new hosts"
-vagrant up
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.61"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.137"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.75"
 
 AVAILABLE=1
 while [ $AVAILABLE -ne 0 ]
 do
-    ansible -o -i vagrant_inventory.yml -m ping nodes 2>&1 >/dev/null
+    ansible -o -i proxmox_inventory.yml -m ping nodes 2>&1 >/dev/null
     AVAILABLE=$?
 done
-echo -e "\n[!] Hosts ready, deploying configurations..."
 
-ansible-playbook -i vagrant_inventory.yml playbook.yml
+ansible-playbook -i proxmox_inventory.yml playbook.yml
