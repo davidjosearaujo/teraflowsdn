@@ -222,7 +222,6 @@
 
 - name: Cloning TFS
   hosts: all
-  become: true
   remote_user: "{{ ansible_user }}"
 
   tasks:
@@ -230,5 +229,14 @@
       ansible.builtin.git:
         repo: 'https://labs.etsi.org/rep/tfs/controller.git'
         dest: ./tfs-ctrl
-        version: "{{ tfs_branch }}"
+        version: "{{ tfs_branch | default('master') }}"
       when: microk8s_master is defined
+
+- name: Launching TFS
+  hosts: all
+  remote_user: "{{ ansible_user }}"
+
+  tasks:
+    - name: Load environment variables
+      ansible.builtin.debug:
+        var: "{{ tfs_deploy_env_vars }}"
