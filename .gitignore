@@ -4,4 +4,4 @@
 *clab-tfs-scenario
 *.tfs-scenario.clab.yml.bak
 *.log
-.vscode
+*.vscode
