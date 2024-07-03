@@ -204,7 +204,7 @@
         alias: linkerd
       when: microk8s_master is defined
 
-    - name: Start MicroK8s again
+    - name: Ensure MicroK8s started
       ansible.builtin.command: microk8s start
       register: out
       changed_when: out.rc != 0
