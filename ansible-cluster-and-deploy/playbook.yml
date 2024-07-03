@@ -51,6 +51,11 @@
         group: root
         mode: "600"
 
+    - name: Remove workdir tmp.daemon.json file
+      ansible.builtin.file:
+        path: tmp.daemon.json
+        state: absent
+
     - name: Restart docker service
       ansible.builtin.service:
         name: docker
@@ -77,6 +82,12 @@
       when: hostvars[inventory_hostname].containerlab_host is not defined
       register: out
       changed_when: out.rc != 0
+
+    - name: Installing Containerlab
+      ansible.builtin.command: bash -c "$(curl -sL https://get.containerlab.dev)"
+      register: out
+      changed_when: out.rc != 0
+      when: containerlab_host is defined
 
     - name: Install MicroK8s
       community.general.snap:
@@ -208,3 +219,16 @@
       ansible.builtin.command: microk8s start
       register: out
       changed_when: out.rc != 0
+
+- name: Cloning TFS
+  hosts: all
+  become: true
+  remote_user: "{{ ansible_user }}"
+
+  tasks:
+    - name: Clone repository
+      ansible.builtin.git:
+        repo: 'https://labs.etsi.org/rep/tfs/controller.git'
+        dest: ./tfs-ctrl
+        version: "{{ tfs_branch }}"
+      when: microk8s_master is defined
