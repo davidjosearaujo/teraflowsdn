@@ -31,7 +31,7 @@ sudo mv tmp.daemon.json /etc/docker/daemon.json
 sudo chown root:root /etc/docker/daemon.json
 sudo chmod 600 /etc/docker/daemon.json
 sudo systemctl restart docker
-echo '192.168.56.2 hub' | sudo tee -a /etc/hosts
+echo '192.168.56.2 controller' | sudo tee -a /etc/hosts
 echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
 echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
 sudo snap install microk8s --classic --channel=1.24/stable
@@ -41,7 +41,7 @@ sudo usermod -aG microk8s $USER
 sudo mkdir -p /home/$USER/.kube
 sudo microk8s config > /home/$USER/.kube/config
 sudo chown -f -R $USER /home/$USER/.kube
-if [ "hub" == $(cat /etc/hostname) ]; then
+if [ "controller" == $(cat /etc/hostname) ]; then
     mkdir /home/$USER/tfs-ctrl
     git clone https://labs.etsi.org/rep/tfs/controller.git /home/$USER/tfs-ctrl
     chown -f -R $USER /home/$USER/tfs-ctrl
@@ -50,30 +50,31 @@ SCRIPT
 
 Vagrant.configure("2") do |config|
 
-  config.vm.define "hub" do |hub|
-    hub.vm.box = "ubuntu/focal64"
+  config.vm.define "controller" do |controller|
+    controller.vm.box = "davidjosearaujo/teraflowsdncontroller"
+    controller.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
+    controller.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
+    controller.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
+    controller.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
+    controller.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
+    controller.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
 
-    hub.vm.hostname = "hub"
-    hub.vm.network "private_network", ip: "192.168.56.2"
+    controller.vm.hostname = "controller"
+    controller.vm.network "private_network", ip: "192.168.56.2"
 
-    hub.vm.network "forwarded_port", guest: 80, host: 8080     # WebUI
-    hub.vm.network "forwarded_port", guest: 8084, host: 50750  # Linkerd Viz Dashboard
-    hub.vm.network "forwarded_port", guest: 8081, host: 8081   # CockroachDB Dashboard
-    hub.vm.network "forwarded_port", guest: 8222, host: 8222   # NATS Dashboard
-    hub.vm.network "forwarded_port", guest: 9000, host: 9000   # QuestDB Dashboard
-    hub.vm.network "forwarded_port", guest: 9090, host: 9090   # Prometheus Dashboard
+    controller.vm.provision "shell", inline: $linkerdReverseProxy
 
-    hub.vm.provider "virtualbox" do |v|
+    controller.vm.provision "shell", inline: "ip route add 172.100.100.0/24 via 192.168.56.1"
+
+    controller.vm.provider "virtualbox" do |v|
       v.memory = 4096
       v.cpus = 2
     end
 
-    # Installing Microk8s
-    hub.vm.provision "shell", inline: $microk8sTfsInstall
-
-    # Setup Linkerd Viz reverse proxy
-    hub.vm.provision "shell", inline: $linkerdReverseProxy
-
+    # Update controller source code to the desired branch
+    if ENV['BRANCH'] != nil
+      controller.vm.provision "shell", inline: "cd ./tfs-ctrl && git pull && git switch " + ENV['BRANCH']
+    end
   end
 
   config.vm.define "spoke1" do |spoke1|
@@ -83,7 +84,7 @@ Vagrant.configure("2") do |config|
     spoke1.vm.network "private_network", ip: "192.168.56.3"
 
     spoke1.vm.provider "virtualbox" do |v|
-      v.memory = 2048
+      v.memory = 1024
       v.cpus = 2
     end
 
@@ -98,7 +99,7 @@ Vagrant.configure("2") do |config|
     spoke2.vm.network "private_network", ip: "192.168.56.4"
 
     spoke2.vm.provider "virtualbox" do |v|
-      v.memory = 2048
+      v.memory = 1024
       v.cpus = 2
     end
 
