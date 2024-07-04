@@ -78,13 +78,15 @@
       run_once: true
 
     - name: Specify ip route to Containerlab network
-      ansible.builtin.command: sudo ip route add 172.100.100.0/24 via {{ containerlab_host_address }}
+      ansible.builtin.shell: sudo ip route add 172.100.100.0/24 via {{ containerlab_host_address }}
       when: hostvars[inventory_hostname].containerlab_host is not defined
       register: out
       changed_when: out.rc != 0
 
     - name: Installing Containerlab
-      ansible.builtin.command: bash -c "$(curl -sL https://get.containerlab.dev)"
+      ansible.builtin.shell: |
+        curl -sL https://containerlab.dev/setup \
+        | sudo bash -s "all"
       register: out
       changed_when: out.rc != 0
       when: containerlab_host is defined
