@@ -20,9 +20,6 @@ nodes:
       containerlab_host: true
       microk8s_master: true
       tfs_branch: feat/86-testing-configurations-for-ddos-protection
-      tfs_deploy_env_vars:
-        - CRDB_DEPLOY_MODE: cluster
-        - NATS_DEPLOY_MODE: cluster
     spoke1:
       ansible_host: 192.168.56.11
     spoke2:
