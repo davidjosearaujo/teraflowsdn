@@ -83,7 +83,7 @@
       register: out
       changed_when: out.rc != 0
 
-    - name: Installing Containerlab
+    - name: InstallContainerlab
       ansible.builtin.shell: |
         curl -sL https://containerlab.dev/setup \
         | sudo bash -s "all"
@@ -91,10 +91,10 @@
       changed_when: out.rc != 0
       when: containerlab_host is defined
 
-    - name: Installing gnmic
+    - name: Install gnmic
       ansible.builtin.shell: |
         curl -sL https://get-gnmic.kmrd.dev \
-        | sudo bash -s "all"
+        | sudo bash
       register: out
       changed_when: out.rc != 0
 
