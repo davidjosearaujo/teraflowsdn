@@ -7,8 +7,8 @@ Vagrant.configure("2") do |config|
     hub.vm.hostname = "hub"
     hub.vm.network "private_network", ip: "192.168.56.10"
     hub.vm.provider "virtualbox" do |v|
-      v.memory = 2048
-      v.cpus = 1
+      v.memory = 4096
+      v.cpus = 3
     end
     hub.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/host.pub"
     hub.vm.provision "shell", inline: "cat /home/vagrant/.ssh/host.pub >> /home/vagrant/.ssh/authorized_keys"
@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     spoke1.vm.hostname = "spoke1"
     spoke1.vm.network "private_network", ip: "192.168.56.11"
     spoke1.vm.provider "virtualbox" do |v|
-      v.memory = 2048
+      v.memory = 1024
       v.cpus = 1
     end
     spoke1.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/host.pub"
@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
     spoke2.vm.hostname = "spoke2"
     spoke2.vm.network "private_network", ip: "192.168.56.12"
     spoke2.vm.provider "virtualbox" do |v|
-        v.memory = 2048
+        v.memory = 1024
         v.cpus = 1
       end
     spoke2.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/host.pub"

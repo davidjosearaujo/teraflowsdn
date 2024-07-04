@@ -13,7 +13,7 @@ echo 'server {
 }' > /home/vagrant/expose-linkerd									# NGINX reverse proxy configuration
 sudo ln -s /home/vagrant/expose-linkerd /etc/nginx/sites-enabled/	# Create symlink of the NGINX configuration file
 sudo systemctl restart nginx										# Commit the reverse proxy configurations
-echo "linkerd viz dashboard &" >> .profile							# Enable start on login
+echo "linkerd viz dashboard & 2>&1 > /dev/null" >> .profile							# Enable start on login
 SCRIPT
 
 $microk8sTfsInstall = <<-'SCRIPT'
