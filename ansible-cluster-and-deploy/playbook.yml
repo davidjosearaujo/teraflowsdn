@@ -97,7 +97,6 @@
         | sudo bash -s "all"
       register: out
       changed_when: out.rc != 0
-      when: containerlab_host is defined
 
     - name: Install MicroK8s
       community.general.snap:
