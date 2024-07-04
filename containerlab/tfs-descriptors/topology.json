@@ -32,7 +32,7 @@
                 {"action": 1, "custom": {"resource_key": "_connect/address", "resource_value": "172.100.100.101"}},
                 {"action": 1, "custom": {"resource_key": "_connect/port", "resource_value": "57400"}},
                 {"action": 1, "custom": {"resource_key": "_connect/settings", "resource_value": {
-                    "username": "admin", "password": "admin", "use_tls": true
+                    "username": "admin", "password": "NokiaSrl1!", "use_tls": true
                 }}}
             ]}
         },
@@ -42,7 +42,7 @@
                 {"action": 1, "custom": {"resource_key": "_connect/address", "resource_value": "172.100.100.102"}},
                 {"action": 1, "custom": {"resource_key": "_connect/port", "resource_value": "57400"}},
                 {"action": 1, "custom": {"resource_key": "_connect/settings", "resource_value": {
-                    "username": "admin", "password": "admin", "use_tls": true
+                    "username": "admin", "password": "NokiaSrl1!", "use_tls": true
                 }}}
             ]}
         }
