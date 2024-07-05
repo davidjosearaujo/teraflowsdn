@@ -35,13 +35,6 @@ topology:
       memory: 2GB
       mgmt-ipv4: 172.100.100.101
       startup-config: srl1.cli
-    srl2:
-      kind: nokia_srlinux
-      type: ixr6
-      cpu: 0.5
-      memory: 2GB
-      mgmt-ipv4: 172.100.100.102
-      startup-config: srl2.cli
     client1:
       kind: linux
       cpu: 0.1
@@ -66,6 +59,5 @@ topology:
         - bash /host/iperf3-client.sh
 
   links:
-    - endpoints: [srl1:e1-1, srl2:e1-1]
-    - endpoints: [client1:eth1, srl1:e1-2]
-    - endpoints: [client2:eth1, srl2:e1-2]
+    - endpoints: [client1:eth1, srl1:e1-1]
+    - endpoints: [client2:eth1, srl1:e1-2]

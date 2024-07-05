@@ -20,16 +20,6 @@
                 }}},
                 {"action": 1, "custom": {"resource_key": "/device[SRL1]/endpoint[ethernet-1/2]/settings", "resource_value": {
                     "ipv4_address": "172.16.1.1", "ipv4_prefix": 24, "sub_interface_index": 0
-                }}},
-
-                {"action": 1, "custom": {"resource_key": "/device[SRL2]/settings", "resource_value": {
-                    "static_routes": [{"prefix": "172.16.1.0/24", "next_hop": "172.0.0.1"}]
-                }}},
-                {"action": 1, "custom": {"resource_key": "/device[SRL2]/endpoint[ethernet-1/1]/settings", "resource_value": {
-                    "ipv4_address": "172.0.0.2", "ipv4_prefix": 30, "sub_interface_index": 0
-                }}},
-                {"action": 1, "custom": {"resource_key": "/device[SRL2]/endpoint[ethernet-1/2]/settings", "resource_value": {
-                    "ipv4_address": "172.16.2.1", "ipv4_prefix": 24, "sub_interface_index": 0
                 }}}
             ]}
         }
