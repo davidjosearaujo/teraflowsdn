@@ -16,14 +16,14 @@
 nodes:
   hosts:
     hub:
-      ansible_host: 10.255.32.137
+      ansible_host: 10.255.32.32
       containerlab_host: true
       microk8s_master: true
       tfs_branch: feat/86-testing-configurations-for-ddos-protection
     spoke1:
-      ansible_host: 10.255.32.61
+      ansible_host: 10.255.32.121
     spoke2:
-      ansible_host: 10.255.32.75
+      ansible_host: 10.255.32.99
   vars:
     ansible_user: davidaraujo
     ansible_ssh_private_key_file: ./proxmox_keys/ssh_key.pem

@@ -19,6 +19,29 @@
   remote_user: "{{ ansible_user }}"
 
   tasks:
+    - name: Wait for /var/lib/dpkg/lock-frontend to be released
+      ansible.builtin.shell: while lsof /var/lib/dpkg/lock-frontend; do sleep 10; done
+      register: out
+      changed_when: out.rc != 0
+
+    - name: Configure all packages
+      ansible.builtin.command: dpkg --configure -a
+      register: out
+      changed_when: out.rc != 0
+
+    - name: Update repositories
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Fix any broken packages
+      ansible.builtin.apt:
+        name: "*"
+        state: fixed
+
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist
+
     - name: Install dependencies
       ansible.builtin.apt:
         pkg:
@@ -83,7 +106,7 @@
       register: out
       changed_when: out.rc != 0
 
-    - name: InstallContainerlab
+    - name: Install Containerlab
       ansible.builtin.shell: |
         curl -sL https://containerlab.dev/setup \
         | sudo bash -s "all"
@@ -169,7 +192,7 @@
 
     - name: Join command
       ansible.builtin.set_fact:
-        join_command: "{{ (dict(master_output).results | selectattr('changed', 'true') | first).stdout }}"
+        join_command: "{{ (dict(master_output).results | selectattr('changed', 'true') | first).stdout }} --skip-verify"
       when: microk8s_master is not defined
 
     - name: MicroK8s join-node

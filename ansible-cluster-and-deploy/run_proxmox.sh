@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.61"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.137"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.75"
+echo "[!] Removing destroyed hosts from known hosts"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.121"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.32"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.99"
 
 AVAILABLE=1
 while [ $AVAILABLE -ne 0 ]
@@ -22,5 +23,6 @@ do
     ansible -o -i proxmox_inventory.yml -m ping nodes 2>&1 >/dev/null
     AVAILABLE=$?
 done
+echo -e "[!] Hosts ready, deploying configurations..."
 
 ansible-playbook -i proxmox_inventory.yml playbook.yml
