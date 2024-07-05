@@ -26,5 +26,5 @@ nodes:
       ansible_host: 10.255.32.99
   vars:
     ansible_user: davidaraujo
-    ansible_ssh_private_key_file: ./proxmox_keys/ssh_key.pem
+    ansible_ssh_private_key_file: ./proxmox-keys/ssh_key.pem
     ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new

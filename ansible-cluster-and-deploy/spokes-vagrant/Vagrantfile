@@ -1,0 +1,57 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+$microk8sTfsInstall = <<-'SCRIPT'
+sudo dpkg --configure -a
+sudo apt-get update -y
+sudo apt --fix-broken install -y
+sudo apt-get dist-upgrade -y
+sudo apt-get install -y ca-certificates curl gnupg lsb-release snapd jq
+sudo apt-get install -y docker.io docker-buildx
+if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
+    | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
+    | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
+    | tee tmp.daemon.json
+sudo mv tmp.daemon.json /etc/docker/daemon.json
+sudo chown root:root /etc/docker/daemon.json
+sudo chmod 600 /etc/docker/daemon.json
+sudo systemctl restart docker
+echo '192.168.56.1 davidjosearaujo' | sudo tee -a /etc/hosts
+echo '192.168.56.11 spoke1' | sudo tee -a /etc/hosts
+echo '192.168.56.12 spoke2' | sudo tee -a /etc/hosts
+sudo snap install microk8s --classic --channel=1.24/stable
+sudo snap alias microk8s.kubectl kubectl
+sudo usermod -aG docker $USER
+sudo usermod -aG microk8s $USER
+sudo mkdir -p /home/$USER/.kube
+sudo microk8s config > /home/$USER/.kube/config
+sudo chown -f -R $USER /home/$USER/.kube
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  config.vm.define "spoke1" do |spoke1|
+    spoke1.vm.box = "ubuntu/mantic64"
+    spoke1.vm.hostname = "spoke1"
+    spoke1.vm.network "private_network", ip: "192.168.56.11"
+    spoke1.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 1
+    end
+
+    # Installing Microk8s
+    spoke1.vm.provision "shell", inline: $microk8sTfsInstall
+  end
+
+  config.vm.define "spoke2" do |spoke2|
+    spoke2.vm.box = "ubuntu/mantic64"
+    spoke2.vm.hostname = "spoke2"
+    spoke2.vm.network "private_network", ip: "192.168.56.12"
+    spoke2.vm.provider "virtualbox" do |v|
+        v.memory = 2048
+        v.cpus = 1
+      end
+
+    # Installing Microk8s
+    spoke2.vm.provision "shell", inline: $microk8sTfsInstall
+  end
+end
