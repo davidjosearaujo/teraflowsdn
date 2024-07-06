@@ -33,7 +33,6 @@ sudo chmod 600 /etc/docker/daemon.json
 sudo systemctl restart docker
 echo '192.168.56.2 controller' | sudo tee -a /etc/hosts
 echo '192.168.56.3 spoke1' | sudo tee -a /etc/hosts
-echo '192.168.56.4 spoke2' | sudo tee -a /etc/hosts
 sudo snap install microk8s --classic --channel=1.24/stable
 sudo snap alias microk8s.kubectl kubectl
 sudo usermod -aG docker $USER
@@ -78,33 +77,20 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "spoke1" do |spoke1|
-    spoke1.vm.box = "ubuntu/focal64"
+    spoke1.vm.box = "ubuntu/mantic64"
 
     spoke1.vm.hostname = "spoke1"
     spoke1.vm.network "private_network", ip: "192.168.56.3"
 
     spoke1.vm.provider "virtualbox" do |v|
-      v.memory = 1024
+      v.memory = 2048
       v.cpus = 2
     end
+
+    spoke1.vm.provision "shell", inline: "ip route add 172.100.100.0/24 via 192.168.56.1"
 
     # Installing Microk8s
     spoke1.vm.provision "shell", inline: $microk8sTfsInstall
-  end
-
-  config.vm.define "spoke2" do |spoke2|
-    spoke2.vm.box = "ubuntu/focal64"
-
-    spoke2.vm.hostname = "spoke2"
-    spoke2.vm.network "private_network", ip: "192.168.56.4"
-
-    spoke2.vm.provider "virtualbox" do |v|
-      v.memory = 1024
-      v.cpus = 2
-    end
-
-    # Installing Microk8s
-    spoke2.vm.provision "shell", inline: $microk8sTfsInstall
   end
 
 end
