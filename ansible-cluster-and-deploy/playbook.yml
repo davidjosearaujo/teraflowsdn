@@ -257,7 +257,7 @@
   remote_user: "{{ ansible_user }}"
 
   tasks:
-    - name: Clone repository
+    - name: Clone repository and switch to desired branch
       ansible.builtin.git:
         repo: 'https://labs.etsi.org/rep/tfs/controller.git'
         dest: ./tfs-ctrl
