@@ -132,6 +132,16 @@
         name: microk8s.kubectl
         alias: kubectl
 
+    - name: Ensure group "microk8s" exists
+      ansible.builtin.group:
+        name: microk8s
+        state: present
+
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+        name: docker
+        state: present
+
     - name: Add user to docker and microk8s groups
       ansible.builtin.user:
         name: "{{ ansible_user }}"
@@ -141,12 +151,16 @@
       ansible.builtin.file:
         path: /home/{{ ansible_user }}/.kube
         state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: "0644"
 
     - name: Create .kube/config file
       ansible.builtin.file:
         path: /home/{{ ansible_user }}/.kube/config
         state: touch
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: "0644"
 
     - name: Get microk8s config
