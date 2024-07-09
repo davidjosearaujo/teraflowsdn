@@ -16,6 +16,7 @@ echo "[!] Removing destroyed hosts from known hosts"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.81"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.59"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.122"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.40"
 
 AVAILABLE=1
 while [ $AVAILABLE -ne 0 ]

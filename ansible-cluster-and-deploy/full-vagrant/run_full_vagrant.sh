@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cd ./full-vagrant
-
 echo "[!] Destroying existing Vagrant machines"
 vagrant destroy -f --parallel
 
@@ -22,17 +20,16 @@ ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.10"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.11"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.12"
 
+
 echo -e "\n[+] Creating new hosts"
 vagrant up
-
-cd ..
 
 AVAILABLE=1
 while [ $AVAILABLE -ne 0 ]
 do
-    ansible -o -i ./full-vagrant/vagrant_inventory.yml -m ping nodes 2>&1 >/dev/null
+    ansible -o -i vagrant_inventory.yml -m ping nodes 2>&1 >/dev/null
     AVAILABLE=$?
 done
 echo -e "\n[!] Hosts ready, deploying configurations..."
 
-ansible-playbook -i ./full-vagrant/vagrant_inventory.yml playbook.yml
+ansible-playbook -i vagrant_inventory.yml ../playbook.yml
