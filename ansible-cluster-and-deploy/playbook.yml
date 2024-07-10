@@ -19,186 +19,177 @@
   remote_user: "{{ ansible_user }}"
 
   tasks:
-      - name: Wait for /var/lib/dpkg/lock-frontend to be released
-        ansible.builtin.shell: while lsof /var/lib/dpkg/lock-frontend; do sleep 10; done
-        register: out
-        changed_when: out.rc != 0
+    - name: Wait for /var/lib/dpkg/lock-frontend to be released
+      ansible.builtin.shell: while lsof /var/lib/dpkg/lock-frontend; do sleep 10; done
+      register: out
+      changed_when: out.rc != 0
 
-      - name: Configure all packages
-        ansible.builtin.command: dpkg --configure -a
-        register: out
-        changed_when: out.rc != 0
+    - name: Update repositories and fix any broken packages
+      ansible.builtin.shell: |
+        dpkg --configure -a && \
+        apt-get update -y && \
+        apt --fix-broken install -y && \
+        apt-get dist-upgrade -y
+      register: out
+      changed_when: out.rc != 0
 
-      - name: Update repositories
-        ansible.builtin.apt:
-            update_cache: true
-
-    - name: Fix any broken packages
+    - name: Install dependencies
       ansible.builtin.apt:
-        name: "*"
-        state: fixed
+          pkg:
+              - ca-certificates
+              - curl
+              - gnupg
+              - lsb-release
+              - snapd
+              - jq
+              - docker.io
+              - docker-buildx
+          state: fixed
+          update_cache: true
 
-    - name: Upgrade the OS (apt-get dist-upgrade)
-      ansible.builtin.apt:
-        upgrade: dist
+    - name: Update Docker daemon.json with insecure-registries
+      ansible.builtin.shell: |
+          if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
+            | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
+            | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
+            | tee tmp.daemon.json
+      register: out
+      changed_when: out.rc != 0
 
-      - name: Install dependencies
-        ansible.builtin.apt:
-            pkg:
-                - ca-certificates
-                - curl
-                - gnupg
-                - lsb-release
-                - snapd
-                - jq
-                - docker.io
-                - docker-buildx
-            state: fixed
-            update_cache: true
+    - name: Copy tmp.daemon.json
+      ansible.builtin.copy:
+          remote_src: true
+          src: tmp.daemon.json
+          dest: /etc/docker/daemon.json
+          owner: root
+          group: root
+          mode: "600"
 
-      - name: Update Docker daemon.json with insecure-registries
-        ansible.builtin.shell: |
-            if [ -s /etc/docker/daemon.json ]; then sudo cat /etc/docker/daemon.json; else echo '{}'; fi \
-              | jq 'if has("insecure-registries") then . else .+ {"insecure-registries": []} end' -- \
-              | jq '."insecure-registries" |= (.+ ["localhost:32000"] | unique)' -- \
-              | tee tmp.daemon.json
-        register: out
-        changed_when: out.rc != 0
+    - name: Remove workdir tmp.daemon.json file
+      ansible.builtin.file:
+          path: tmp.daemon.json
+          state: absent
 
-      - name: Copy tmp.daemon.json
-        ansible.builtin.copy:
-            remote_src: true
-            src: tmp.daemon.json
-            dest: /etc/docker/daemon.json
-            owner: root
-            group: root
-            mode: "600"
+    - name: Restart docker service
+      ansible.builtin.service:
+          name: docker
+          state: restarted
 
-      - name: Remove workdir tmp.daemon.json file
-        ansible.builtin.file:
-            path: tmp.daemon.json
-            state: absent
+    - name: Add address of all hosts to all hosts
+      ansible.builtin.lineinfile:
+          dest: /etc/hosts
+          regexp: .*{{ item }}$
+          line: "{{ hostvars[item].ansible_host }} {{ item }}"
+          state: present
+      when: hostvars[item].ansible_host is defined
+      with_items: "{{ groups.all }}"
 
-      - name: Restart docker service
-        ansible.builtin.service:
-            name: docker
-            state: restarted
+    - name: Find the Containerlab host IP
+      ansible.builtin.set_fact:
+          containerlab_host_address: "{{ hostvars[item].ansible_host }}"
+      when: hostvars[item].containerlab_host is defined
+      with_items: "{{ groups['all'] }}"
+      run_once: true
 
-      - name: Add address of all hosts to all hosts
-        ansible.builtin.lineinfile:
-            dest: /etc/hosts
-            regexp: .*{{ item }}$
-            line: "{{ hostvars[item].ansible_host }} {{ item }}"
-            state: present
-        when: hostvars[item].ansible_host is defined
-        with_items: "{{ groups.all }}"
+    - name: Create ip route file
+      ansible.builtin.file:
+          path: /etc/network/if-up.d/containerlab-host
+          state: touch
+          mode: "0751"
 
-      - name: Find the Containerlab host IP
-        ansible.builtin.set_fact:
-            containerlab_host_address: "{{ hostvars[item].ansible_host }}"
-        when: hostvars[item].containerlab_host is defined
-        with_items: "{{ groups['all'] }}"
-        run_once: true
+    - name: Specify ip route to Containerlab network
+      ansible.builtin.blockinfile:
+          path: /etc/network/if-up.d/containerlab-host
+          block: |
+              #!/bin/sh
+              if [ "$IFACE" = "eth0" ]; then
+                ip route add 172.100.100.0/24 via {{ containerlab_host_address }}
+              fi
 
-      - name: Create ip route file
-        ansible.builtin.file:
-            path: /etc/network/if-up.d/containerlab-host
-            state: touch
-            mode: "0751"
+    - name: Install Containerlab
+      ansible.builtin.shell: |
+          curl -sL https://containerlab.dev/setup \
+          | sudo bash -s "all"
+      register: out
+      changed_when: out.rc != 0
+      when: containerlab_host is defined
 
-      - name: Specify ip route to Containerlab network
-        ansible.builtin.blockinfile:
-            path: /etc/network/if-up.d/containerlab-host
-            block: |
-                #!/bin/sh
-                if [ "$IFACE" = "eth0" ]; then
-                  ip route add 172.100.100.0/24 via {{ containerlab_host_address }}
-                fi
+    - name: Install gnmic
+      ansible.builtin.shell: |
+          curl -sL https://get-gnmic.kmrd.dev \
+          | sudo bash
+      register: out
+      changed_when: out.rc != 0
 
-      - name: Install Containerlab
-        ansible.builtin.shell: |
-            curl -sL https://containerlab.dev/setup \
-            | sudo bash -s "all"
-        register: out
-        changed_when: out.rc != 0
-        when: containerlab_host is defined
+    - name: Install MicroK8s
+      community.general.snap:
+          name: microk8s
+          classic: true
+          channel: 1.24/stable
 
-      - name: Install gnmic
-        ansible.builtin.shell: |
-            curl -sL https://get-gnmic.kmrd.dev \
-            | sudo bash
-        register: out
-        changed_when: out.rc != 0
+    - name: Create kubectl alias
+      community.general.snap_alias:
+          name: microk8s.kubectl
+          alias: kubectl
 
-      - name: Install MicroK8s
-        community.general.snap:
-            name: microk8s
-            classic: true
-            channel: 1.24/stable
+    - name: Ensure group "microk8s" exists
+      ansible.builtin.group:
+          name: microk8s
+          state: present
 
-      - name: Create kubectl alias
-        community.general.snap_alias:
-            name: microk8s.kubectl
-            alias: kubectl
+    - name: Ensure group "docker" exists
+      ansible.builtin.group:
+          name: docker
+          state: present
 
-      - name: Ensure group "microk8s" exists
-        ansible.builtin.group:
-            name: microk8s
-            state: present
+    - name: Add user to docker and microk8s groups
+      ansible.builtin.user:
+          name: "{{ ansible_user }}"
+          groups: docker, microk8s
 
-      - name: Ensure group "docker" exists
-        ansible.builtin.group:
-            name: docker
-            state: present
+    - name: Reboot the machine for groups to take effect
+      ansible.builtin.reboot:
 
-      - name: Add user to docker and microk8s groups
-        ansible.builtin.user:
-            name: "{{ ansible_user }}"
-            groups: docker, microk8s
+    - name: Create .kube directory
+      ansible.builtin.file:
+          path: /home/{{ ansible_user }}/.kube
+          state: directory
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: "0644"
 
-      - name: Reboot the machine for groups to take effect
-        ansible.builtin.reboot:
+    - name: Create .kube/config file
+      ansible.builtin.file:
+          path: /home/{{ ansible_user }}/.kube/config
+          state: touch
+          owner: "{{ ansible_user }}"
+          group: "{{ ansible_user }}"
+          mode: "0644"
 
-      - name: Create .kube directory
-        ansible.builtin.file:
-            path: /home/{{ ansible_user }}/.kube
-            state: directory
-            owner: "{{ ansible_user }}"
-            group: "{{ ansible_user }}"
-            mode: "0644"
+    - name: Get microk8s config
+      ansible.builtin.command: sudo microk8s config
+      register: microk8s_config
+      changed_when: microk8s_config.rc != 0
 
-      - name: Create .kube/config file
-        ansible.builtin.file:
-            path: /home/{{ ansible_user }}/.kube/config
-            state: touch
-            owner: "{{ ansible_user }}"
-            group: "{{ ansible_user }}"
-            mode: "0644"
+    - name: Keep microk8s config
+      ansible.builtin.copy:
+          remote_src: true
+          content: "{{ microk8s_config.stdout }}"
+          dest: /home/{{ ansible_user }}/.kube/config
+          mode: "0644"
+      register: out
 
-      - name: Get microk8s config
-        ansible.builtin.command: sudo microk8s config
-        register: microk8s_config
-        changed_when: microk8s_config.rc != 0
+    - name: Add IP address to microk8s certificate template
+      ansible.builtin.lineinfile:
+          dest: /var/snap/microk8s/current/certs/csr.conf.template
+          search_string: "#MOREIPS"
+          line: IP.3 = {{ ansible_host }}
+          state: present
 
-      - name: Keep microk8s config
-        ansible.builtin.copy:
-            remote_src: true
-            content: "{{ microk8s_config.stdout }}"
-            dest: /home/{{ ansible_user }}/.kube/config
-            mode: "0644"
-        register: out
-
-      - name: Add IP address to microk8s certificate template
-        ansible.builtin.lineinfile:
-            dest: /var/snap/microk8s/current/certs/csr.conf.template
-            search_string: "#MOREIPS"
-            line: IP.3 = {{ ansible_host }}
-            state: present
-
-      - name: Start MicroK8s
-        ansible.builtin.command: microk8s start
-        register: out
-        changed_when: out.rc != 0
+    - name: Start MicroK8s
+      ansible.builtin.command: microk8s start
+      register: out
+      changed_when: out.rc != 0
 
 - name: Forming MicroK8s cluster
   hosts: all
@@ -207,25 +198,25 @@
   serial: 1
 
   tasks:
-      - name: MicroK8s add-node
-        ansible.builtin.shell: |
-            microk8s add-node \
-            | grep -m 1 "{{ hostvars[item].ansible_host }}"
-        register: master_output
-        delegate_to: "{{ item }}"
-        with_items: "{{ groups.all }}"
-        when: (microk8s_master is not defined) and (containerlab_host is not defined) and (hostvars[item].microk8s_master is defined)
+    - name: MicroK8s add-node
+      ansible.builtin.shell: |
+          microk8s add-node \
+          | grep -m 1 "{{ hostvars[item].ansible_host }}"
+      register: master_output
+      delegate_to: "{{ item }}"
+      with_items: "{{ groups.all }}"
+      when: (microk8s_master is not defined) and (containerlab_host is not defined) and (hostvars[item].microk8s_master is defined)
 
-      - name: Join command
-        ansible.builtin.set_fact:
-            join_command: "{{ (dict(master_output).results | selectattr('changed', 'true') | first).stdout }} --skip-verify"
-        when: (microk8s_master is not defined) and (containerlab_host is not defined)
+    - name: Join command
+      ansible.builtin.set_fact:
+          join_command: "{{ (dict(master_output).results | selectattr('changed', 'true') | first).stdout }} --skip-verify"
+      when: (microk8s_master is not defined) and (containerlab_host is not defined)
 
-      - name: MicroK8s join-node
-        ansible.builtin.command: "{{ join_command }}"
-        register: out
-        changed_when: out.rc != 0
-        when: (microk8s_master is not defined) and (containerlab_host is not defined)
+    - name: MicroK8s join-node
+      ansible.builtin.command: "{{ join_command }}"
+      register: out
+      changed_when: out.rc != 0
+      when: (microk8s_master is not defined) and (containerlab_host is not defined)
 
 - name: Enabling MicroK8s
   hosts: all
@@ -233,59 +224,59 @@
   remote_user: "{{ ansible_user }}"
 
   tasks:
-      - name: MicroK8s refresh certificate
-        ansible.builtin.command: microk8s refresh-certs -e ca.crt
-        register: out
-        changed_when: out.rc != 0
-        when: microk8s_master is not defined
+    - name: MicroK8s refresh certificate
+      ansible.builtin.command: microk8s refresh-certs -e ca.crt
+      register: out
+      changed_when: out.rc != 0
+      when: (microk8s_master is not defined) and (containerlab_host is not defined)
 
-      - name: MicroK8s refresh config file
-        ansible.builtin.command: microk8s config > /home/$USER/.kube/config
-        register: out
-        changed_when: out.rc != 0
-        when: microk8s_master is not defined
+    - name: MicroK8s refresh config file
+      ansible.builtin.command: microk8s config > /home/$USER/.kube/config
+      register: out
+      changed_when: out.rc != 0
+      when: (microk8s_master is not defined) and (containerlab_host is not defined)
 
-      - name: Enable add-ons
-        ansible.builtin.command: microk8s.enable {{ item }}
-        loop:
-            - community
-            - dns
-            - helm3
-            - hostpath-storage
-            - ingress
-            - registry
-            - prometheus
-            - metrics-server
-            - linkerd
-        register: out
-        changed_when: out.rc != 0
-        when: microk8s_master is defined
+    - name: Enable add-ons
+      ansible.builtin.command: microk8s.enable {{ item }}
+      loop:
+          - community
+          - dns
+          - helm3
+          - hostpath-storage
+          - ingress
+          - registry
+          - prometheus
+          - metrics-server
+          - linkerd
+      register: out
+      changed_when: out.rc != 0
+      when: microk8s_master is defined
 
-      - name: Create kubectl helm3 alias
-        community.general.snap_alias:
-            name: microk8s.helm3
-            alias: helm3
-        when: microk8s_master is defined
+    - name: Create kubectl helm3 alias
+      community.general.snap_alias:
+          name: microk8s.helm3
+          alias: helm3
+      when: microk8s_master is defined
 
-      - name: Create kubectl linkerd alias
-        community.general.snap_alias:
-            name: microk8s.linkerd
-            alias: linkerd
-        when: microk8s_master is defined
+    - name: Create kubectl linkerd alias
+      community.general.snap_alias:
+          name: microk8s.linkerd
+          alias: linkerd
+      when: microk8s_master is defined
 
-      - name: Ensure MicroK8s started
-        ansible.builtin.command: microk8s start
-        register: out
-        changed_when: out.rc != 0
+    - name: Ensure MicroK8s started
+      ansible.builtin.command: microk8s start
+      register: out
+      changed_when: out.rc != 0
 
 - name: Cloning TFS
   hosts: all
   remote_user: "{{ ansible_user }}"
 
   tasks:
-      - name: Clone repository and switch to desired branch
-        ansible.builtin.git:
-            repo: "https://labs.etsi.org/rep/tfs/controller.git"
-            dest: ./tfs-ctrl
-            version: "{{ tfs_branch | default('master') }}"
-        when: microk8s_master is defined
+    - name: Clone repository and switch to desired branch
+      ansible.builtin.git:
+          repo: "https://labs.etsi.org/rep/tfs/controller.git"
+          dest: ./tfs-ctrl
+          version: "{{ tfs_branch | default('master') }}"
+      when: microk8s_master is defined

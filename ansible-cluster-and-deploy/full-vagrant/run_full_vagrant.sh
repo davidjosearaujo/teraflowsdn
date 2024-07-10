@@ -19,7 +19,7 @@ echo -e "\n[!] Removing destroyed hosts from known hosts"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.10"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.11"
 ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.12"
-
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.13"
 
 echo -e "\n[+] Creating new hosts"
 vagrant up
