@@ -16,7 +16,7 @@
 nodes:
   hosts:
     hub:
-      ansible_host: 10.255.32.81
+      ansible_host: 10.255.32.145
       microk8s_master: true
       tfs_branch: develop
     spoke1:
