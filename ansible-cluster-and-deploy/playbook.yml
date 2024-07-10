@@ -36,14 +36,14 @@
     - name: Install dependencies
       ansible.builtin.apt:
           pkg:
-              - ca-certificates
-              - curl
-              - gnupg
-              - lsb-release
-              - snapd
-              - jq
-              - docker.io
-              - docker-buildx
+            - ca-certificates
+            - curl
+            - gnupg
+            - lsb-release
+            - snapd
+            - jq
+            - docker.io
+            - docker-buildx
           state: fixed
           update_cache: true
 
