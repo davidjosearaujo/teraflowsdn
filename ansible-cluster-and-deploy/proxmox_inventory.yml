@@ -16,17 +16,17 @@
 nodes:
   hosts:
     hub:
-      ansible_host: 10.255.32.145
+      ansible_host: 10.255.32.73
       microk8s_master: true
       tfs_branch: develop
     spoke1:
-      ansible_host: 10.255.32.59
+      ansible_host: 10.255.32.41
     spoke2:
-      ansible_host: 10.255.32.122
+      ansible_host: 10.255.32.98
     containerlab:
-      ansible_host: 10.255.32.40
+      ansible_host: 10.255.32.85
       containerlab_host: true
   vars:
     ansible_user: davidaraujo
-    ansible_ssh_private_key_file: ./proxmox-keys/ssh_key.pem
+    ansible_ssh_private_key_file: ./proxmox-keys/id_rsa
     ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new
