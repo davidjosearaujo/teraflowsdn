@@ -26,9 +26,10 @@
 
       - name: Update repositories and fix any broken packages
         ansible.builtin.shell: |
-            dpkg --configure -a && \
-            apt-get update -y && \
-            apt --fix-broken install -y && \
+            dpkg --configure -a; \
+            apt-get clean
+            apt-get update -y; \
+            apt --fix-broken install -y; \
             apt-get dist-upgrade -y
         register: out
         changed_when: out.rc != 0
@@ -36,15 +37,14 @@
       - name: Install dependencies
         ansible.builtin.apt:
             pkg:
-              - ca-certificates
-              - curl
-              - gnupg
-              - lsb-release
-              - snapd
-              - jq
-              - docker.io
-              - docker-buildx
-            state: fixed
+                - ca-certificates
+                - curl
+                - gnupg
+                - lsb-release
+                - snapd
+                - jq
+                - docker.io
+                - docker-buildx
             update_cache: true
 
       - name: Update Docker daemon.json with insecure-registries
@@ -55,6 +55,12 @@
               | tee tmp.daemon.json
         register: out
         changed_when: out.rc != 0
+
+      - name: Guarantee /etc/docker directory
+        ansible.builtin.file:
+            path: /etc/docker
+            state: directory
+            mode: "0600"
 
       - name: Copy tmp.daemon.json
         ansible.builtin.copy:
@@ -74,15 +80,6 @@
         ansible.builtin.service:
             name: docker
             state: restarted
-
-      - name: Add address of all hosts to all hosts
-        ansible.builtin.lineinfile:
-            dest: /etc/hosts
-            regexp: .*{{ item }}$
-            line: "{{ hostvars[item].ansible_host }} {{ item }}"
-            state: present
-        when: hostvars[item].ansible_host is defined
-        with_items: "{{ groups.all }}"
 
       - name: Install Containerlab
         ansible.builtin.shell: |
@@ -127,6 +124,15 @@
 
       - name: Reboot the machine for groups to take effect
         ansible.builtin.reboot:
+
+      - name: Add address of all hosts to all hosts
+        ansible.builtin.lineinfile:
+            dest: /etc/hosts
+            regexp: .*{{ item }}$
+            line: "{{ hostvars[item].ansible_host }} {{ item }}"
+            state: present
+        when: hostvars[item].ansible_host is defined
+        with_items: "{{ groups.all }}"
 
       - name: Find the Containerlab host IP
         ansible.builtin.set_fact:
@@ -177,10 +183,17 @@
             line: IP.3 = {{ ansible_host }}
             state: present
 
+      - name: Pause for 1 minute
+        ansible.builtin.pause:
+            minutes: 1
+
       - name: Start MicroK8s
         ansible.builtin.command: microk8s start
         register: out
         changed_when: out.rc != 0
+        until: out.rc == 0
+        retries: 10
+        delay: 10
 
 - name: Forming MicroK8s cluster
   hosts: all
@@ -270,4 +283,4 @@
             repo: "https://labs.etsi.org/rep/tfs/controller.git"
             dest: ./tfs-ctrl
             version: "{{ tfs_branch | default('master') }}"
-        when: microk8s_master is defined
+        when: microk8s_master is defined or containerlab_host is defined

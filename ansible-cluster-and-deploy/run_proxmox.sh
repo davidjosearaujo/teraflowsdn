@@ -13,10 +13,10 @@
 # limitations under the License.
 
 echo "[!] Removing destroyed hosts from known hosts"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.81"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.59"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.122"
-ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "192.168.56.40"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "10.255.32.89"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "10.255.32.70"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "10.255.32.72"
+ssh-keygen -f "/home/davidjosearaujo/.ssh/known_hosts" -R "10.255.32.34"
 
 AVAILABLE=1
 while [ $AVAILABLE -ne 0 ]

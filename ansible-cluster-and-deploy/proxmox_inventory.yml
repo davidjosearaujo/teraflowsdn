@@ -16,15 +16,15 @@
 nodes:
   hosts:
     hub:
-      ansible_host: 10.255.32.73
+      ansible_host: 10.255.32.89
       microk8s_master: true
       tfs_branch: develop
     spoke1:
-      ansible_host: 10.255.32.41
+      ansible_host: 10.255.32.70
     spoke2:
-      ansible_host: 10.255.32.98
+      ansible_host: 10.255.32.72
     containerlab:
-      ansible_host: 10.255.32.85
+      ansible_host: 10.255.32.34
       containerlab_host: true
   vars:
     ansible_user: davidaraujo
