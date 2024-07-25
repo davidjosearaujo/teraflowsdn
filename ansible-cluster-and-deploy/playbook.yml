@@ -146,6 +146,7 @@
             ip route add 172.100.100.0/24 via "{{ containerlab_host_address }}"
         register: out
         changed_when: out.rc != 0
+        when: containerlab_host is not defined
 
       - name: Create .kube directory
         ansible.builtin.file:
