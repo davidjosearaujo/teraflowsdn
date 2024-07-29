@@ -13,17 +13,13 @@
 # limitations under the License.
 
 #!/bin/bash
-# Usage example: ./test-client.sh <IP> <PORT> <RESULTS DIRECTORY NAME>
 
-touch /host/client.log
-
-CONNECTION_STATUS=1
-while [ $CONNECTION_STATUS -eq 1 ]
+until ping -c 1 172.16.1.10 >& /dev/null
 do
-    # Give time for SRLinux node to stablish links
-    sleep 30
+    sleep 1
+done
 
+while [ 1 -eq 1]
+do
     iperf3 -c 172.16.1.10 -p 8081 -t 60 -u --bidir --logfile /host/results.json -J
-    CONNECTION_STATUS=$?
-    echo "Connection status: $CONNECTION_STATUS" >> /host/client.log
 done

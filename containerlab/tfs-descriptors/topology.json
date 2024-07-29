@@ -27,7 +27,7 @@
             ]}
         },
         {
-            "device_id": {"device_uuid": {"uuid": "SRL1"}}, "device_type": "packet-router", "device_drivers": [8],
+            "device_id": {"device_uuid": {"uuid": "SRL"}}, "device_type": "packet-router", "device_drivers": [8],
             "device_config": {"config_rules": [
                 {"action": 1, "custom": {"resource_key": "_connect/address", "resource_value": "172.100.100.101"}},
                 {"action": 1, "custom": {"resource_key": "_connect/port", "resource_value": "57400"}},
@@ -39,31 +39,31 @@
     ],
     "links": [
         {
-            "link_id": {"link_uuid": {"uuid": "DC1/eth1==SRL1/ethernet-1/1"}},
+            "link_id": {"link_uuid": {"uuid": "DC1/eth1==SRL/ethernet-1/1"}},
             "link_endpoint_ids": [
                 {"device_id": {"device_uuid": {"uuid": "DC1"}}, "endpoint_uuid": {"uuid": "eth1"}},
-                {"device_id": {"device_uuid": {"uuid": "SRL1"}}, "endpoint_uuid": {"uuid": "ethernet-1/1"}}
+                {"device_id": {"device_uuid": {"uuid": "SRL"}}, "endpoint_uuid": {"uuid": "ethernet-1/1"}}
             ]
         },
         {
-            "link_id": {"link_uuid": {"uuid": "SRL1/ethernet-1/1==DC1/eth1"}},
+            "link_id": {"link_uuid": {"uuid": "SRL/ethernet-1/1==DC1/eth1"}},
             "link_endpoint_ids": [
-                {"device_id": {"device_uuid": {"uuid": "SRL1"}}, "endpoint_uuid": {"uuid": "ethernet-1/1"}},
+                {"device_id": {"device_uuid": {"uuid": "SRL"}}, "endpoint_uuid": {"uuid": "ethernet-1/1"}},
                 {"device_id": {"device_uuid": {"uuid": "DC1"}}, "endpoint_uuid": {"uuid": "eth1"}}
             ]
         },
 
         {
-            "link_id": {"link_uuid": {"uuid": "DC2/eth1==SRL1/ethernet-1/2"}},
+            "link_id": {"link_uuid": {"uuid": "DC2/eth1==SRL/ethernet-1/2"}},
             "link_endpoint_ids": [
                 {"device_id": {"device_uuid": {"uuid": "DC2"}}, "endpoint_uuid": {"uuid": "eth1"}},
-                {"device_id": {"device_uuid": {"uuid": "SRL1"}}, "endpoint_uuid": {"uuid": "ethernet-1/2"}}
+                {"device_id": {"device_uuid": {"uuid": "SRL"}}, "endpoint_uuid": {"uuid": "ethernet-1/2"}}
             ]
         },
         {
-            "link_id": {"link_uuid": {"uuid": "SRL1/ethernet-1/2==DC2/eth1"}},
+            "link_id": {"link_uuid": {"uuid": "SRL/ethernet-1/2==DC2/eth1"}},
             "link_endpoint_ids": [
-                {"device_id": {"device_uuid": {"uuid": "SRL1"}}, "endpoint_uuid": {"uuid": "ethernet-1/2"}},
+                {"device_id": {"device_uuid": {"uuid": "SRL"}}, "endpoint_uuid": {"uuid": "ethernet-1/2"}},
                 {"device_id": {"device_uuid": {"uuid": "DC2"}}, "endpoint_uuid": {"uuid": "eth1"}}
             ]
         }
