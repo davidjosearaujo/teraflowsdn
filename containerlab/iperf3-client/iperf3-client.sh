@@ -14,12 +14,14 @@
 
 #!/bin/bash
 
+rm /host/results.json >& /dev/null
+
 until ping -c 1 172.16.1.10 >& /dev/null
 do
     sleep 1
 done
 
-while [ 1 -eq 1]
+while [ 1 -eq 1 ]
 do
     iperf3 -c 172.16.1.10 -p 8081 -t 60 -u --bidir --logfile /host/results.json -J
 done
