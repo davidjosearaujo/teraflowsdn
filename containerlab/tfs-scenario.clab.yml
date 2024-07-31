@@ -30,13 +30,13 @@ topology:
     srl1:
       kind: nokia_srlinux
       type: ixr6
-      cpu: 0.5
+      cpu: 1
       memory: 2GB
       mgmt-ipv4: 172.100.100.101
       startup-config: srl.cli
     client1:
       kind: linux
-      cpu: 0.1
+      cpu: 1
       memory: 100MB
       mgmt-ipv4: 172.100.100.201
       binds:
@@ -46,7 +46,7 @@ topology:
         - ip route add 172.16.2.0/24 via 172.16.1.1
     client2:
       kind: linux
-      cpu: 0.1
+      cpu: 1
       memory: 100MB
       mgmt-ipv4: 172.100.100.202
       binds:
