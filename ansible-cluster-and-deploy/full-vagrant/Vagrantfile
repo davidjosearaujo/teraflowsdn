@@ -3,15 +3,17 @@
 
 Vagrant.configure("2") do |config|
   config.vm.define "hub" do |hub|
-    hub.vm.box = "ubuntu/jammy64"
+    hub.vm.box = "ubuntu/focal64"
     hub.vm.hostname = "hub"
     hub.vm.network "private_network", ip: "192.168.56.10"
     hub.vm.provider "virtualbox" do |v|
-      v.memory = 8192
+      v.memory = 6144
       v.cpus = 6
     end
     hub.vm.provision "file", source: "~/.ssh/id_rsa.pub", destination: "/home/vagrant/.ssh/host.pub"
     hub.vm.provision "shell", inline: "cat /home/vagrant/.ssh/host.pub >> /home/vagrant/.ssh/authorized_keys"
+
+    hub.vm.provision "file", source: "./interrupt_device_service.sh", destination: "/home/vagrant/interrupt_device_service.sh"
   end
 
   # config.vm.define "spoke1" do |spoke1|

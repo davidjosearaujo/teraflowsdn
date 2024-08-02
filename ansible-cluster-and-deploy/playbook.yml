@@ -255,6 +255,7 @@
             - linkerd
         register: out
         changed_when: out.rc != 0
+        ignore_errors: true
         when: microk8s_master is defined
 
       - name: Create kubectl helm3 alias
