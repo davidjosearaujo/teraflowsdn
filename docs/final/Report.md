@@ -325,6 +325,7 @@ A module is a self-contained tree of nodes. Modules are the smallest unit that c
 ![YANG module](./img/2023-09-18_14-21.png)
 
 A module contains:
+
 - boilerplate, like a namespace prefix for reference in other modules, description, version/ revision history, etc.
 - identities and derived types-
 - modular groupings.
