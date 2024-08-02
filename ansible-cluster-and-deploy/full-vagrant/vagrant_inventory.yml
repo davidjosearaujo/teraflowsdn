@@ -18,14 +18,14 @@ nodes:
     hub:
       ansible_host: 192.168.56.10
       microk8s_master: true
-      tfs_branch: develop
-    spoke1:
-      ansible_host: 192.168.56.11
-    spoke2:
-      ansible_host: 192.168.56.12
-    containerlab:
-      ansible_host: 192.168.56.13
-      containerlab_host: true
+      tfs_branch: master
+    # spoke1:
+    #   ansible_host: 192.168.56.11
+    # spoke2:
+    #   ansible_host: 192.168.56.12
+    # containerlab:
+    #   ansible_host: 192.168.56.13
+    #   containerlab_host: true
   vars:
     ansible_user: vagrant
     ansible_ssh_common_args: -o StrictHostKeyChecking=accept-new
