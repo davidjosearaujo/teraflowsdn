@@ -26,4 +26,4 @@ do
 done
 echo -e "[!] Hosts ready, deploying configurations..."
 
-ansible-playbook -i proxmox_inventory.yml playbook.yml
+ansible-playbook -i proxmox_inventory.yml ../playbook.yml
