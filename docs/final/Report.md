@@ -17,7 +17,7 @@
 ---
 geometry: margin=25mm
 title: Cloud Native Software Defined Network Project
-date: August 1, 2024
+date: August 3, 2024
 ---
 
 | | |
@@ -114,6 +114,7 @@ By focusing on these aspects, the deployment aims to deliver a reliable and high
     - [Session management](#session-management)
     - [WebUI availability](#webui-availability)
     - [Node failure](#node-failure)
+  - [Device Connection](#device-connection)
 - [Clustering](#clustering)
   - [Creating the Microk8s Cluster](#creating-the-microk8s-cluster)
   - [Service Clustering](#service-clustering)
@@ -146,15 +147,15 @@ A NETCONF s**erver contains one or more configuration datastores**. A configurat
 
 The NETCONF protocol supports a set of low-level operations for retrieving and managing device configuration information. The operations are specified through XML elements, which are described in the following table. NETCONF also supports additional operations based on each device's capabilities.
 
-- <get> - Retrieves all or part of the information about the running configuration and device state.
-- <get-config> - Retrieves all or part of the configuration information available from a specified configuration datastore.
-- <edit-config> - Submits all or part of a configuration to a target configuration datastore.
-- <copy-config> - Creates or replaces a target configuration datastore with the information from another configuration datastore.
-- <delete-config> - Deletes a target configuration datastore, but only if it's not running.
-- <lock> - Locks a target configuration datastore, unless a lock already exists on any part of that datastore.
-- <unlock> - Releases a lock on a configuration datastore that was previously locked through a operation.
-- <close-session> - Requests the NETCONF server to gracefully terminate an open session.
-- <kill-session> - Forces a session's termination, causing current operations to be aborted.
+- \<get\> - Retrieves all or part of the information about the running configuration and device state.
+- \<get-config\> - Retrieves all or part of the configuration information available from a specified configuration datastore.
+- \<edit-config\> - Submits all or part of a configuration to a target configuration datastore.
+- \<copy-config\> - Creates or replaces a target configuration datastore with the information from another configuration datastore.
+- \<delete-config\> - Deletes a target configuration datastore, but only if it's not running.
+- \<lock\> - Locks a target configuration datastore, unless a lock already exists on any part of that datastore.
+- \<unlock\> - Releases a lock on a configuration datastore that was previously locked through a operation.
+- \<close-session\> - Requests the NETCONF server to gracefully terminate an open session.
+- \<kill-session\> - Forces a session's termination, causing current operations to be aborted.
 
 \pagebreak
 
@@ -244,15 +245,13 @@ Vendor-independent automation to simplify and accelerate compliance testing of O
 
 ### Principles
 
-Modular model definition.
+Modular model definition. The model structure combines.
 
-The model structure combines.
 - Configuration (intended).
 - Operational data (applied config and derived state).
 
-Each module subtree declares config and state containers.
+Each module subtree declares config and state containers. The model is backward compatibility.
 
-Model backward compatibility.
 - Driven by the use of semantic versioning (xx.yy.zz).
 - Diverges from IETF YANG guidelines (full compatibility).
 
@@ -278,6 +277,7 @@ Ongoing notable effort across the SDOs to model constructs (e.g. topologies, pro
 A YANG model includes a **header, imports, and includes statements, type definitions, configurations, and operational data declarations as well as actions (RPC) and notifications.**
 
 The language is expressive enough to:
+
 - Structure data into data trees within the so called datastores, by means of encapsulation of containers and lists, and to define constrained data types (e.g. following a given textual pattern).
 - Condition the presence of specific data to the support of optional features.
 - Allow the refinement of models by extending and constraining existing models (by inheritance/augmentation), resulting in a hierarchy of models.
@@ -288,6 +288,7 @@ It is used to express the structure of data, NOT the data itself.
 Instances of data can be expressed in XML, JSON, Protobuf, etc., and are considered valid if they adhere to the YANG data model (schema).
 
 From a YANG model, we care about 2 things:
+
 1. Data tree organization (from which we get the paths and leaf data types).
 2. The semantics of the leaf nodes (from the description field, usually in English).
 
@@ -300,6 +301,7 @@ A network consists of: Nodes and Links. A node consists of: node-id and ports. A
 ### Uses
 
 YANG is a data modeling language designed to write data models for the NETCONF protocol. It provides the following features:
+
 - Human readable, and easy-to-learn representation.
 - Hierarchical configuration data models.
 - Reusable types and groupings (structured types).
@@ -381,8 +383,7 @@ Containers marked config false are state data that is read-only from a client's 
 
 This gNMI is described using [Protobuf](https://github.com/openconfig/gnmi/blob/master/proto/gnmi/gnmi.proto) and the data can be either encoded in JSON or in Protobuf (Currently in JSON).
 
-It is a generic API to read and write configuration state. Suitable for any tree-based data model.
-- YANG as a possible data model.
+It is a generic API to read and write configuration state. Suitable for any tree-based data model. YANG as a possible data model.
 
 It is a possible successor of NETCONF.
 
@@ -391,6 +392,7 @@ It is a possible successor of NETCONF.
 ### Why gNMI?
 
 Provides a single service for state management:
+
 - retrieving device capabilities (e.g. models supported).
 - reading/writing configuration.
 - receiving streaming telemetry updates.
@@ -406,10 +408,10 @@ service gNMI {
 
 Built on a modern standard, secure transport and open RPC framework with many language bindings.
 
-Supports very efficient serialization and data access.
-- 3x-10x smaller than XML.
+Supports very efficient serialization and data access, three to ten times smaller than XML.
 
-Offers an implemented alternative to NETCONF, RESTCONF, …
+Offers an implemented alternative to NETCONF or RESTCONF.
+
 - early-release implementations on multiple router and transport platforms.
 - reference tools published by OpenConfig.
 
@@ -420,10 +422,12 @@ Offers an implemented alternative to NETCONF, RESTCONF, …
 Batches of configuration can be written or read using a list of Updates.
 
 Updates consist of two parts:
+
 - Relative path to data model.
 - The value associated with the node.
 
 Updates can transmit either:
+
 - Configuration snapshots of a tree or sub-tree. (encoded in Protobuf or JSON)
 - Leaf values only. (encoded as [path, value] entries)
 
@@ -535,6 +539,7 @@ Network devices managed by the gRPC Network Management Interface (gNMI) must sup
 TFS is composed of multiple microservices in a Kubernetes cluster. Because of this, for a robust and resilient deployment the minimum requirements are considerable, but even these may not be enough. From a DevSecOps point of view, where we expect a solution to be designed with the possibility of expanding its capacity to handle large amounts of traffic with high flexibility, the system requirements may be even more demanding.
 
 Because of this, we envision a system with the following, minimum, requirements.
+
 - A physical server or virtual machine for running the TFS controller with the following minimum specifications:
   - 4 cores / vCPUs
   - 12 GB of RAM
@@ -733,6 +738,24 @@ The advantage of clustering is to prevent, if a node becomes unavailable, the se
 Is this case, we stopped the hub node, and as we can see, the spokes are able to resolve its pods failing and because of that, new replicas are being booted and will then be spread by the nodes.
 
 MicroK8s takes some time to settle, but once it does, the user can access the WebUI and load services, and the pods responsible for that are now running on the spokes.
+
+\pagebreak
+
+## Device Connection
+
+The network topology in question consists of a single router (SRL) and two client nodes. The system relies on a `deviceservice` pod to communicate with the SRL node via gRPC, retrieving and sending metrics to a monitoring system. Under normal operation, as shown in the middle graph, the traffic pattern includes periodic peaks. These peaks are expected and represent traffic generated by consecutive iperf sessions between the client nodes, indicating that both the `deviceservice` pod and the SRL node are functioning correctly with metrics being recorded and displayed as anticipated.
+
+![Regular ìperf session between clients](./img/iperf_session_between_clients.png)
+
+In an experimental scenario to test the system's resilience, the `deviceservice` pod is intentionally killed and restarted after a 30-second delay. This process is captured in the first graph, where red bars indicate the moments when the pod was killed and when it was relaunched. Prior to the pod being killed, metrics for both bytes received (green line) and packets received (yellow line) are recorded normally. However, after the pod restart, these metrics flatline, showing no data is being received from the SRL node. This flatline suggests that the newly started `deviceservice` pod fails to reestablish its gRPC connection with the SRL node.
+
+![Device connection not re-established after failure](./img/device_connection_not_reestablished.png)
+
+The logs from the terminal provide further insight. They confirm that the new `deviceservice` pod starts up and attempts to initialize by selecting drivers for the devices. Despite this initialization, there is no indication that the pod successfully reestablishes its connection with the SRL node. The logs show the pod trying to connect using the gNMI protocol, but the absence of logs indicating a successful connection correlates with the lack of metric data in the graph.
+
+![New device pod logs](./img/new_device_pod_cant_reestablish_connection.png)
+
+In conclusion, the critical issue identified is that the `deviceservice` pod, upon being killed and restarted, does not reestablish its gRPC connection with the SRL node. This failure results in the monitoring system receiving no metrics from the SRL node post-restart, as evidenced by the flatline in the first graph. The pod is running and initializes its drivers, but the essential connection to the SRL node is not restored, leading to the observed lapse in metric reporting.
 
 \pagebreak
 
