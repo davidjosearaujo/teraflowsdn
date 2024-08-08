@@ -30,7 +30,7 @@ date: August 3, 2024
 | **Supervisor** | Daniel Nunes Corujo |
 | **Research Project** | CNSDN - Cloud Native Software Defined Networks |
 | **Project Reference** | O-0003-AV-23 |
-| **Period of the Grant** | Ausgust 2023 to July 2024 |
+| **Period of the Grant** | August 2023 to July 2024 |
 
 | | |
 |:- | :- |
